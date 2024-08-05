@@ -23,6 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # history
-.history
+/.history/client
 
 .DS_Store
