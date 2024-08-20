@@ -1,27 +1,275 @@
+/* General App Styles */
 .App {
-  text-align: center;
-  background-color: #282c34;
+  display: flex;
   min-height: 100vh;
+  background-color: #F5F5F5;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 268px;
+  background-color: #FFFFFF;
+  border-right: 1px solid #EFEFEF;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Changed from space-between to flex-start */
+  padding: 20px 0;
+  position: fixed;
+  height: 100vh;
+}
+
+.logo-design {
+  text-align: center;
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 50px;
+}
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: auto; /* Added to push log out to the bottom */
+}
+
+.sidebar-link,
+.sidebar-link-inactive {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.App-content {
-  background-color: rgba(255, 255, 255, 0.1); /* optional: to make it slightly transparent */
-  padding: 20px;
-  border-radius: 10px;
-}
-
-h2 {
-  font-size: 2rem;
+  padding: 10px 20px;
+  width: 191px;
+  text-decoration: none;
+  border-radius: 8px;
   margin-bottom: 20px;
 }
 
-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  margin-top: 20px;
-  cursor: pointer;
+.sidebar-link {
+  background-color: #60D1C4;
+  color: #FFFFFF;
 }
+
+.sidebar-link-inactive {
+  background-color: rgba(197, 252, 255, 0.2);
+  color: #339CAB;
+}
+
+.sidebar-link-text-white,
+.sidebar-link-text-inactive {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Log out Frame Styles */
+.logout-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center-align the contents */
+  padding: 0px;
+  gap: 10px; /* Reduced gap for better spacing */
+  position: absolute;
+  width: 191.43px;
+  height: auto; /* Set height to auto for dynamic content */
+  left: 38.29px;
+  bottom: 100px; /* Adjusted position to move everything up */
+}
+
+/* Log out Button Styles */
+.logout-button {
+  display: flex;
+  flex-direction: row; /* Set row direction for icon and text alignment */
+  align-items: center; /* Center-align the icon and text */
+  padding: 10px 20px; /* Added padding for a consistent button look */
+  width: 191.43px;
+  height: 38.29px;
+  background: rgba(221, 221, 221, 0.38); /* Retained background styling */
+  border-radius: 7.66px;
+  cursor: pointer; /* Added cursor pointer for better UX */
+}
+
+/* Log out Icon Styles */
+.logout-icon {
+  width: 22.97px;
+  height: 22.97px;
+  margin-right: 10px; /* Added margin for spacing between icon and text */
+}
+
+/* Log out Text Styles */
+.logout-text {
+  font-family: 'Open Sans', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  color: rgba(27, 26, 26, 0.63);
+}
+
+
+.sidebar-link-text {
+  width: 60px;
+  height: 22px;
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  color: rgba(27, 26, 26, 0.63);
+}
+
+/* Main Layout Styles */
+.main-layout {
+  margin-left: 268px; /* Account for the sidebar width */
+  width: calc(100% - 268px);
+}
+
+/* Header (Search Bar + User Section) */
+.header {
+  box-sizing: border-box;
+  width: 100%;
+  height: 102.9px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #EFEFEF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 268px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1083.6px;
+  padding: 0 20px;
+}
+
+.search-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25.2px;
+  width: 913.5px;
+  height: 50.4px;
+  border: 1px solid #E5E5E5;
+  border-radius: 8.4px;
+  position: relative;
+  left: -210px; /* Adjusted value to move the search bar slightly to the left */
+  margin: 0 auto; /* Centers the search bar horizontally */
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 17px;
+  color: #C3C3C3;
+}
+
+.search-icon {
+  width: 25.2px;
+  height: 25.2px;
+}
+
+
+.user-section {
+  display: flex;
+  align-items: center;
+  gap: 12.6px;
+}
+
+.notification-icon {
+  width: 25.2px;
+  height: 25.2px;
+}
+
+.user-avatar {
+  width: 46.2px;
+  height: 46.2px;
+  border-radius: 50%;
+  background-size: cover;
+}
+
+/* Main Content Styles */
+.main-content {
+  margin-top: 102.9px; /* Adjust to leave space for the header */
+  padding: 40px;
+  background-color: #F5F5F5;
+}
+
+.sub-heading {
+  font-size: 24px;
+  font-weight: 600;
+  color: rgba(27, 26, 26, 0.85);
+  margin-bottom: 30px;
+}
+
+.assignments-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.assignments-table th,
+.assignments-table td {
+  text-align: left;
+  padding: 10px 15px;
+  border-bottom: 1px solid #EFEFEF;
+}
+
+.assignments-table th {
+  background-color: #F5F5F5;
+}
+
+/* Status Styles */
+.status {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.status.not-started {
+  background-color: #EFEFEF;
+  color: #8A8A8A;
+}
+
+.status.completed {
+  background-color: #60D1C4;
+  color: #FFFFFF;
+}
+
+.user-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12.6px;
+  position: absolute; /* Change to absolute to position it relative to the page */
+  right: 300px; /* Adjust this value to align it correctly on the right */
+  top: 20px;   /* Adjust this value to align it correctly on the top */
+}
+
+
+
+.notification-icon {
+  width: 25.2px;
+  height: 25.2px;
+  background-image: url('./notification_bell.png');
+  background-size: cover;
+  background-position: center;
+}
+
+
+.user-avatar {
+  width: 46.2px;
+  height: 46.2px;
+  border-radius: 50%;
+  background-image: url('./avatar_kris.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+
