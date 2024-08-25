@@ -1,0 +1,45 @@
+/* App.css */
+
+/* General App Styles */
+.App {
+  display: flex;
+  min-height: 100vh;
+  background-color: #F5F5F5;
+}
+
+/* Main Layout Styles */
+.main-layout {
+  margin-left: 268px; /* Account for the sidebar width */
+  width: calc(100% - 268px);
+}
+
+/* Header (Search Bar + User Section) */
+.header {
+  box-sizing: border-box;
+  width: 100%;
+  height: 102.9px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #EFEFEF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 268px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1083.6px;
+  padding: 0 20px;
+}
+
+/* Main Content Styles */
+.main-content {
+  margin-top: 102.9px; /* Adjust to leave space for the header */
+  padding: 40px;
+  background-color: #F5F5F5;
+}

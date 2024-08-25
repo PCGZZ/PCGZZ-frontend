@@ -1,0 +1,11 @@
+/* Global styles, including resets and typography */
+body {
+    margin: 0;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #F5F5F5;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+  }
+  

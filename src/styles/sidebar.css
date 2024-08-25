@@ -1,0 +1,97 @@
+/* Sidebar.css */
+
+.sidebar {
+  width: 268px;
+  background-color: #FFFFFF;
+  border-right: 1px solid #EFEFEF;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 20px 0;
+  position: fixed;
+  height: 100vh;
+}
+
+.logo-design {
+  text-align: center;
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 50px;
+}
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: auto;
+}
+
+.sidebar-link,
+.sidebar-link-inactive {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  width: 191px;
+  text-decoration: none;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.sidebar-link {
+  background-color: #60D1C4;
+  color: #FFFFFF;
+}
+
+.sidebar-link-inactive {
+  background-color: rgba(197, 252, 255, 0.2);
+  color: #339CAB;
+}
+
+.sidebar-link-text-white,
+.sidebar-link-text-inactive {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* Log out Frame Styles */
+.logout-frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  gap: 10px;
+  position: absolute;
+  width: 191.43px;
+  height: auto;
+  left: 38.29px;
+  bottom: 100px;
+}
+
+/* Log out Button Styles */
+.logout-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 20px;
+  width: 191.43px;
+  height: 38.29px;
+  background: rgba(221, 221, 221, 0.38);
+  border-radius: 7.66px;
+  cursor: pointer;
+}
+
+.logout-icon {
+  width: 22.97px;
+  height: 22.97px;
+  margin-right: 10px;
+}
+
+.logout-text {
+  font-family: 'Open Sans', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  color: rgba(27, 26, 26, 0.63);
+}
