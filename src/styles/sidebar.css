@@ -26,8 +26,7 @@
   margin-bottom: auto;
 }
 
-.sidebar-link,
-.sidebar-link-inactive {
+.sidebar-link {
   display: flex;
   align-items: center;
   padding: 10px 20px;
@@ -35,16 +34,18 @@
   text-decoration: none;
   border-radius: 8px;
   margin-bottom: 20px;
-}
-
-.sidebar-link {
-  background-color: #60D1C4;
   color: #FFFFFF;
+  background-color: #60D1C4; /* Default to green when active */
 }
 
-.sidebar-link-inactive {
-  background-color: rgba(197, 252, 255, 0.2);
+.sidebar-link.inactive {
+  background-color: rgba(197, 252, 255, 0.2); /* Light grey when inactive */
   color: #339CAB;
+}
+
+.sidebar-link.active {
+  background-color: #60D1C4; /* Green when active */
+  color: #FFFFFF;
 }
 
 .sidebar-link-text-white,
