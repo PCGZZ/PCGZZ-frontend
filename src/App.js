@@ -1,37 +1,37 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import SearchBar from './components/SearchBar';
-import ChatBox from './components/ChatBox'; // Import ChatBox
-import Assignments from './components/Assignments';
-import Login from './components/Login';
-import './styles/App.css';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
+import SearchBar from "./components/SearchBar";
+import ChatBox from "./components/ChatBox"; // Import ChatBox
+import Assignments from "./components/Assignments";
+import Login from "./components/Login";
+import "./styles/App.css";
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
-          {/* Login Page */}
+          {/* Login Page and then redirect to Auth0 */}
           <Route path="/" element={<Login />} />
 
           {/* Virtual Adult Page */}
           <Route
             path="/virtual-adult"
-            element={(
+            element={
               <>
                 <Sidebar />
                 <div className="main-layout">
                   <ChatBox />
                 </div>
               </>
-            )}
+            }
           />
 
           {/* Assignments Page */}
           <Route
             path="/assignments"
-            element={(
+            element={
               <>
                 <Sidebar />
                 <div className="main-layout">
@@ -39,7 +39,7 @@ function App() {
                   <Assignments />
                 </div>
               </>
-            )}
+            }
           />
         </Routes>
       </div>
