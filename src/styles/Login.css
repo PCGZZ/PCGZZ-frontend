@@ -64,7 +64,7 @@
     right: 20px;
     width: 300px;
     height: auto;
-    background: url('/Users/kangpi/Desktop/UI/PCGZZ-frontend/src/styles/image/virtual-adult.jpg') no-repeat center center;
+    background: url('../styles/image/virtual-adult.jpg') no-repeat center center;
     background-size: contain;
   }
   
