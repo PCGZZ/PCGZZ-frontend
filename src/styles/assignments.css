@@ -1,15 +1,14 @@
 /* Assignments.css */
-
 .main-content {
     margin-top: 102.9px;
     padding: 40px;
-    background-color: #F5F5F5;
+    background-color: var(--white);
   }
   
   .sub-heading {
     font-size: 24px;
     font-weight: 600;
-    color: rgba(27, 26, 26, 0.85);
+    color: var(--text);
     margin-bottom: 30px;
   }
   
@@ -22,11 +21,11 @@
   .assignments-table td {
     text-align: left;
     padding: 10px 15px;
-    border-bottom: 1px solid #EFEFEF;
+    border-bottom: 1.5px solid var(--table-line);
   }
   
   .assignments-table th {
-    background-color: #F5F5F5;
+    background-color: var(--white);
   }
   
   /* Status Styles */
@@ -43,7 +42,7 @@
   }
   
   .status.completed {
-    background-color: #60D1C4;
-    color: #FFFFFF;
+    background-color: var(--main);
+    color: var(--white);
   }
   

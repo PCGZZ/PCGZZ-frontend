@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import '../styles/ChatBox.css'; // Ensure the path is correct
+import SendIcon from '@mui/icons-material/Send';
+import { IconButton } from '@mui/material'; // Import Button component from Material-UI
+import '../styles/ChatBox.css';
+import avatarKris from '../styles/image/avatar_kris.jpg'; // Adjust the path
+import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
 
 function ChatBox() {
   const [messages, setMessages] = useState([]);
@@ -38,7 +42,7 @@ function ChatBox() {
           <div key={msg.id} className={`chatbox-message ${msg.sender}`}>
             <img
               className="avatar"
-              src={msg.sender === 'user' ? '/path/to/user-avatar.png' : '/path/to/bot-avatar.png'}
+              src={msg.sender === 'user' ? avatarKris : avatarTeacher}
               alt={`${msg.sender} avatar`}
             />
             <p>{msg.text}</p>
@@ -57,9 +61,9 @@ function ChatBox() {
             }
           }}
         />
-        <button type="button" onClick={sendMessage}>
-          <img src="/path/to/send-icon.png" alt="Send" />
-        </button>
+        <IconButton sx={{ color: 'var(--darker)' }} size="small" onClick={sendMessage}>
+          <SendIcon />
+        </IconButton>
       </div>
     </div>
   );

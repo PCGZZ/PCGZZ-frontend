@@ -4,7 +4,7 @@
 .App {
   display: flex;
   min-height: 100vh;
-  background-color: #F5F5F5;
+  background-color: var(--white);
 }
 
 /* Main Layout Styles */
@@ -18,8 +18,8 @@
   box-sizing: border-box;
   width: 100%;
   height: 102.9px;
-  background: #FFFFFF;
-  border-bottom: 1px solid #EFEFEF;
+  background: var(--white);
+  border-bottom: 1px solid var(--table-line);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -41,5 +41,5 @@
 .main-content {
   margin-top: 102.9px; /* Adjust to leave space for the header */
   padding: 40px;
-  background-color: #F5F5F5;
+  background-color: var(--white);
 }

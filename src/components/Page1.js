@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/page1.css'; // Import page-specific styles
+// import '../styles/page1.css'; // Import page-specific styles
 
 function Page1() {
   return (
