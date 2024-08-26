@@ -15,7 +15,7 @@
 }
 
 .login-left h1 {
-  font-size: 32px;
+  font-size: 35px;
   font-weight: bold;
   margin-bottom: 20px;
 }
@@ -50,4 +50,12 @@
   z-index: 1; /* Ensure the text stays on top */
   max-width: 400px; /* Optional: Limit the width of the text */
   line-height: 1.4; /* Adjust line height for better readability */
+}
+
+.deakin-logo {
+  position: absolute;
+  top: 20px; /* Distance from the top */
+  left: 20px; /* Distance from the left */
+  width: 150px; /* Adjust the width as needed */
+  z-index: 10; /* Ensure the logo stays on top */
 }

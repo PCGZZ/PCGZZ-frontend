@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css'; // Ensure you have a Login.css file for styling
+import deakinLogo from '../styles/image/deakin-university.png'; // Adjust the path if necessary
 
 function Login() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-left">
+        <img src={deakinLogo} alt="Deakin University Logo" className="deakin-logo" />
         <h1>Welcome</h1>
         <button className="login-button" onClick={handleLogin} type="button">
           Log in
@@ -22,8 +24,6 @@ function Login() {
         <div className="login-message">
           Chat with your virtual adults now!!!
         </div>
-        <div className="woman-with-tablet" />
-        {/* Updated to be self-closing */}
       </div>
     </div>
   );
