@@ -8,7 +8,7 @@
     padding: 0 25.2px;
     width: 913.5px;
     height: 50.4px;
-    border: 1px solid #E5E5E5;
+    border: 1px solid var(--table-line);
     border-radius: 8.4px;
     position: relative;
     left: -210px;
@@ -19,9 +19,9 @@
     border: none;
     outline: none;
     width: 100%;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--main);
     font-size: 17px;
-    color: #C3C3C3;
+    color: var(--light-in-text);
   }
   
   .search-icon {
@@ -42,7 +42,6 @@
   .notification-icon {
     width: 25.2px;
     height: 25.2px;
-    background-image: url('./notification_bell.png');
     background-size: cover;
     background-position: center;
   }
@@ -51,7 +50,7 @@
     width: 46.2px;
     height: 46.2px;
     border-radius: 50%;
-    background-image: url('./avatar_kris.jpg');
+    background-image: url('./image/avatar_kris.jpg');
     background-size: cover;
     background-position: center;
   }

@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
-import '../styles/ChatBox.css'; // Ensure the path is correct
+import React, { useState } from "react";
+import SendIcon from "@mui/icons-material/Send";
+import { IconButton } from "@mui/material";
+import KeyboardVoiceIcon from "@mui/icons-material/KeyboardVoice";
+import "../styles/ChatBox.css";
+import avatarKris from "../styles/image/avatar_kris.jpg"; // Adjust the path
+import avatarTeacher from "../styles/image/virtual-adult.jpg"; // Import the teacher's avatar
 
 function ChatBox() {
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [chances, setChances] = useState(15); // Initialize with 15 chances
 
   const sendMessage = () => {
@@ -12,23 +17,24 @@ function ChatBox() {
     // Reduce the chances by 1
     setChances(chances - 1);
 
-    const newMessage = { text: input, sender: 'user' };
+    const newMessage = { text: input, sender: "user" };
     setMessages([...messages, newMessage]);
 
-    const botMessage = { text: 'This is a response from the bot.', sender: 'bot' };
+    const botMessage = {
+      text: "This is a response from the bot.",
+      sender: "bot",
+    };
     setMessages([...messages, newMessage, botMessage]);
 
-    setInput('');
+    setInput("");
   };
 
   return (
     <div className="chatbox-container">
       <div className="chatbox-header">
         <span>
-          You have
-          <strong>{chances}</strong>
-          {' '}
-          {chances === 1 ? 'chance' : 'chances'}
+          You have <strong>{chances}</strong>{" "}
+          {chances === 1 ? "chance " : "chances "}
           to talk to
           <strong> Dr Zhou</strong>
         </span>
@@ -38,7 +44,7 @@ function ChatBox() {
           <div key={msg.id} className={`chatbox-message ${msg.sender}`}>
             <img
               className="avatar"
-              src={msg.sender === 'user' ? '/path/to/user-avatar.png' : '/path/to/bot-avatar.png'}
+              src={msg.sender === "user" ? avatarKris : avatarTeacher}
               alt={`${msg.sender} avatar`}
             />
             <p>{msg.text}</p>
@@ -46,20 +52,25 @@ function ChatBox() {
         ))}
       </div>
       <div className="chatbox-input-container">
+        <KeyboardVoiceIcon sx={{ color: "var(--darker)" }} />
         <input
           type="text"
           placeholder="Ask anything..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (e.key === "Enter") {
               sendMessage();
             }
           }}
         />
-        <button type="button" onClick={sendMessage}>
-          <img src="/path/to/send-icon.png" alt="Send" />
-        </button>
+        <IconButton
+          sx={{ color: "var(--darker)" }}
+          size="small"
+          onClick={sendMessage}
+        >
+          <SendIcon />
+        </IconButton>
       </div>
     </div>
   );

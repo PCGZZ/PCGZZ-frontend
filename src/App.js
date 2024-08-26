@@ -5,6 +5,7 @@ import SearchBar from './components/SearchBar';
 import Assignments from './components/Assignments';
 import ChatBox from './components/ChatBox';// Import ChatBox component
 import './styles/App.css';
+import './styles/global.css';
 
 function App() {
   return (
@@ -12,11 +13,23 @@ function App() {
       <div className="App">
         <Sidebar />
         <div className="main-layout">
-          <SearchBar />
           <Routes>
-            <Route path="/assignments" element={<Assignments />} />
-            <Route path="/virtual-adult" element={<ChatBox />} />
-            {/* Route to ChatBox */}
+            {/* Conditionally render the SearchBar only on non-Virtual Adult pages */}
+            <Route
+              path="/virtual-adult"
+              element={
+                <ChatBox />
+              }
+            />
+            <Route
+              path="/assignments"
+              element={(
+                <>
+                  <SearchBar />
+                  <Assignments />
+                </>
+              )}
+            />
           </Routes>
         </div>
       </div>

@@ -1,18 +1,23 @@
+:root {
+  --chat-box: rgba(197, 252, 255, 0.2);
+  --chat--text: 16px;
+}
+
 .chatbox-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100vh;
   padding: 20px;
-  background-color: #F9F9F9;
+  background-color: var(--white);
 }
 
 .chatbox-header {
   text-align: center;
-  font-family: 'Open Sans', sans-serif;
-  font-size: 20px;
+  font-family: var(--main);
+  font-size: var(--message);
   font-weight: 600;
-  color: rgba(27, 26, 26, 0.85);
+  color: var(--text);
   padding: 10px 0;
 }
 
@@ -50,25 +55,25 @@
 
 .chatbox-message p {
   max-width: 60%;
-  background-color: #E8F7F7;
+  background-color: var(--chat-box);
   padding: 10px 15px;
   border-radius: 20px;
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
-  color: rgba(27, 26, 26, 0.85);
+  font-family: var(--main);
+  font-size: var(--chat--text);
+  color: var(--text);
 }
 
 .chatbox-message.user p {
-  background-color: #D6F8F7;
+  background-color: var(--lightest);
 }
 
 .chatbox-input-container {
   display: flex;
   align-items: center;
-  background-color: rgba(143, 223, 228, 0.22);
+  background-color: var(--lightest);
   border-radius: 30px;
   padding: 15px 20px;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--chatbox-shadow);
   position: relative;
   bottom: 50px; /* Adjust this value to move the chatbox up or down */
 }
@@ -78,10 +83,10 @@
   border: none;
   outline: none;
   background: none;
-  font-family: 'Open Sans', sans-serif;
-  font-size: 16px;
+  font-family: var(--main);
+  font-size: var(--chat--text);
   padding: 0 10px;
-  color: #464646;
+  color: var(--text);
 }
 
 .chatbox-input-container button {
