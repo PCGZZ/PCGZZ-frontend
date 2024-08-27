@@ -45,10 +45,7 @@ function ChatBox() {
     <div className="chatbox-container">
       <div className="chatbox-header">
         <span>
-          You have
-          {' '}
-          <strong>{chances}</strong>
-          {' '}
+          You have <strong>{chances}</strong>{' '}
           {chances === 1 ? 'chance ' : 'chances '}
           to talk to
           <strong> Dr Zhou</strong>

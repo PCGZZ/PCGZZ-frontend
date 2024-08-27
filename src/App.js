@@ -18,20 +18,20 @@ function App() {
           {/* Virtual Adult Page */}
           <Route
             path="/virtual-adult"
-            element={(
+            element={
               <>
                 <Sidebar />
                 <div className="main-layout">
                   <ChatBox />
                 </div>
               </>
-            )}
+            }
           />
 
           {/* Assignments Page */}
           <Route
             path="/assignments"
-            element={(
+            element={
               <>
                 <Sidebar />
                 <div className="main-layout">
@@ -39,7 +39,7 @@ function App() {
                   <Assignments />
                 </div>
               </>
-            )}
+            }
           />
         </Routes>
       </div>
