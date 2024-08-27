@@ -3,10 +3,10 @@ import { useAuth0 } from "@auth0/auth0-react";
 import "../styles/Login.css"; // Ensure you have a Login.css file for styling
 
 function Login() {
-  const { loginWithRedirect, isAuthenticated } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, user } = useAuth0();
 
-  return (
-    !isAuthenticated && (
+  if (!isAuthenticated) {
+    return (
       <div className="login-container">
         <div className="login-left">
           <h1>Welcome</h1>
@@ -26,7 +26,21 @@ function Login() {
           {/* Updated to be self-closing */}
         </div>
       </div>
-    )
+    );
+  }
+  // if it's authenticated
+  return (
+    <div>
+      {user?.picture && <img src={user.picture} alt={user?.name} />}
+      <h2>{user?.name}</h2>
+      <ul>
+        {Object.keys(user).map((objKey) => (
+          <li key={objKey}>
+            {objKey}:{user[objKey]}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
