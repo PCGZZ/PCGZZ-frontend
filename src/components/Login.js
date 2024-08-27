@@ -1,6 +1,6 @@
-import React from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import "../styles/Login.css"; // Ensure you have a Login.css file for styling
+import React from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
+import '../styles/Login.css'; // Ensure you have a Login.css file for styling
 
 function Login() {
   const { loginWithRedirect, isAuthenticated, user } = useAuth0();
@@ -36,7 +36,9 @@ function Login() {
       <ul>
         {Object.keys(user).map((objKey) => (
           <li key={objKey}>
-            {objKey}:{user[objKey]}
+            {objKey}
+            :
+            {user[objKey]}
           </li>
         ))}
       </ul>
