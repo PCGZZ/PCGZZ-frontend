@@ -19,14 +19,18 @@ function Assignments() {
           <tr>
             <td>Major Depressive Disorder</td>
             <td>10</td>
-            <td><span className="status not-started">Not started</span></td>
+            <td>
+              <span className="status not-started">Not started</span>
+            </td>
             <td>23/9/2024</td>
             <td>23/10/2024</td>
           </tr>
           <tr>
             <td>Bipolar Disorder</td>
             <td>10</td>
-            <td><span className="status completed">Completed</span></td>
+            <td>
+              <span className="status completed">Completed</span>
+            </td>
             <td>23/09/2022</td>
             <td>23/10/2022</td>
           </tr>

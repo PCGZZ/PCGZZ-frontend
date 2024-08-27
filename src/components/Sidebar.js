@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../styles/sidebar.css';
 import AssignmentIcon from '@mui/icons-material/Assignment';
@@ -7,13 +8,13 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 function Sidebar() {
   const location = useLocation();
+  const { logout } = useAuth0();
   const navigate = useNavigate(); // Initialize useNavigate
 
   const handleLogout = () => {
     // Redirect to the login page
     navigate('/');
   };
-
   return (
     <div className="sidebar">
       <div className="logo-design">
@@ -42,8 +43,8 @@ function Sidebar() {
       </div>
       <div
         className="logout-frame"
-        role="button"// Adding role for accessibility
-        tabIndex={0}// Making it focusable with keyboard
+        role="button" // Adding role for accessibility
+        tabIndex={0} // Making it focusable with keyboard
         onClick={handleLogout}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -52,10 +53,12 @@ function Sidebar() {
         }}
       >
         <div className="logout-button">
-          <div className="logout-icon">
-            <LogoutIcon sx={{ mr: 2, color: 'var(--text)' }} />
-          </div>
-          <div className="logout-text">Log out</div>
+          <button onClick={() => logout()} type="button">
+            <div className="logout-icon">
+              <LogoutIcon sx={{ mr: 2, color: 'var(--text)' }} />
+            </div>
+            <div className="logout-text">Log out</div>
+          </button>
         </div>
       </div>
     </div>

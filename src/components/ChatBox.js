@@ -19,12 +19,24 @@ function ChatBox() {
 
     const newMessage = { text: input, sender: 'user' };
     setMessages([...messages, newMessage]);
-
-    const botMessage = {
-      text: 'This is a response from the bot.',
-      sender: 'bot',
-    };
-    setMessages([...messages, newMessage, botMessage]);
+    fetch('http://localhost:3001/ai/demo/ask', {
+      method: 'POST', // Specify the request method
+      headers: {
+        'Content-Type': 'application/json', // Set the content type
+      },
+      body: JSON.stringify({
+        agent: '66c5965099528d233698d739',
+        question: input,
+      }),
+    })
+      .then((response) => response.json()) // Parse the JSON from the response
+      .then((data) => {
+        const botMessage = { text: data.ans, sender: 'bot' };
+        setMessages([...messages, newMessage, botMessage]);
+      })
+      .catch((error) => {
+        console.error('Error:', error); // Handle errors
+      });
 
     setInput('');
   };
@@ -33,10 +45,7 @@ function ChatBox() {
     <div className="chatbox-container">
       <div className="chatbox-header">
         <span>
-          You have
-          {' '}
-          <strong>{chances}</strong>
-          {' '}
+          You have <strong>{chances}</strong>{' '}
           {chances === 1 ? 'chance ' : 'chances '}
           to talk to
           <strong> Dr Zhou</strong>
