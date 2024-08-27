@@ -33,7 +33,7 @@
 .login-right {
   width: 70%; /* Make the right side 70% of the page */
   background-color: #A0E6DC;
-  background-image: url('/Users/kangpi/Desktop/UI/PCGZZ-frontend/src/styles/image/login.svg'); /* Ensure the correct path */
+  background-image: url('../styles/image/login.svg'); /* Ensure the correct path */
   background-size: cover; /* Cover the entire right side */
   background-position: left center; /* Shift the image slightly to the left */
   display: flex;

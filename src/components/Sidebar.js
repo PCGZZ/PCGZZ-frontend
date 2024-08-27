@@ -29,7 +29,9 @@ function Sidebar() {
         </Link>
       </div>
       <div className="logout-frame">
-        <div className="logout-button" onClick={handleLogout}> {/* Add onClick */}
+        <div className="logout-button" onClick={handleLogout}>
+          {' '}
+          {/* Add onClick */}
           <div className="logout-icon">
             {/* Add log out icon here */}
           </div>
