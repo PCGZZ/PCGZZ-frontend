@@ -50,7 +50,7 @@
     width: 46.2px;
     height: 46.2px;
     border-radius: 50%;
-    background-image: url('/Users/kangpi/Desktop/UI/PCGZZ-frontend/src/styles/image/avatar_kris.jpg');
+    background-image: url('../styles/image/avatar_kris.jpg');
     background-size: cover;
     background-position: center;
   }
