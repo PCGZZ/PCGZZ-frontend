@@ -1,0 +1,70 @@
+.login-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .login-left, .login-right {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .login-left {
+    background-color: #FFFFFF;
+    flex-direction: column;
+  }
+  
+  .login-left h1 {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .login-button {
+    background-color: #60D1C4;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+  
+  .login-right {
+    background-color: #A0E6DC;
+    text-align: center;
+    padding: 30px;
+    position: relative; /* Allows for absolute positioning of the image */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login-right h2 {
+    font-size: 28px;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+  
+  .login-message {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 32px; /* Adjust font size as needed */
+    font-weight: bold;
+    color: #FFFFFF;
+    text-align: center;
+    margin-bottom: 20px; /* Space between text and image */
+  }
+  
+  .woman-with-tablet {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    height: auto;
+    background: url('../styles/image/virtual-adult.jpg') no-repeat center center;
+    background-size: contain;
+  }
+  

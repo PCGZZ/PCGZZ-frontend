@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SendIcon from "@mui/icons-material/Send";
-import { IconButton } from "@mui/material"; // Import Button component from Material-UI
+import { IconButton } from "@mui/material";
+import KeyboardVoiceIcon from "@mui/icons-material/KeyboardVoice";
 import "../styles/ChatBox.css";
 import avatarKris from "../styles/image/avatar_kris.jpg"; // Adjust the path
 import avatarTeacher from "../styles/image/virtual-adult.jpg"; // Import the teacher's avatar
@@ -18,7 +19,6 @@ function ChatBox() {
 
     const newMessage = { text: input, sender: "user" };
     setMessages([...messages, newMessage]);
-
     fetch("http://localhost:3001/ai/demo/ask", {
       method: "POST", // Specify the request method
       headers: {
@@ -45,8 +45,8 @@ function ChatBox() {
     <div className="chatbox-container">
       <div className="chatbox-header">
         <span>
-          You have
-          <strong>{chances}</strong> {chances === 1 ? "chance" : "chances"}
+          You have <strong>{chances}</strong>{" "}
+          {chances === 1 ? "chance " : "chances "}
           to talk to
           <strong> Dr Zhou</strong>
         </span>
@@ -64,6 +64,7 @@ function ChatBox() {
         ))}
       </div>
       <div className="chatbox-input-container">
+        <KeyboardVoiceIcon sx={{ color: "var(--darker)" }} />
         <input
           type="text"
           placeholder="Ask anything..."

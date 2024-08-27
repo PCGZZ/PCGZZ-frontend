@@ -1,32 +1,48 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import '../styles/sidebar.css';
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
+import "../styles/sidebar.css";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import Face2Icon from "@mui/icons-material/Face2";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 function Sidebar() {
   const location = useLocation();
+  const { logout } = useAuth0();
   return (
     <div className="sidebar">
-      <div className="logo-design">Virtual Adults.</div>
+      <div className="logo-design">
+        <Face2Icon sx={{ mr: 2 }} />
+        Virtual Adults.
+      </div>
       <div className="sidebar-links">
-        <Link to="/assignments" className={`sidebar-link ${location.pathname === '/assignments' ? 'active' : 'inactive'}`}>
+        <Link
+          to="/assignments"
+          className={`sidebar-link ${location.pathname === "/assignments" ? "active" : "inactive"}`}
+        >
           <div className="sidebar-link-icon">
-            {/* Add icon here */}
+            <AssignmentIcon sx={{ mr: 2 }} />
           </div>
           <div className="sidebar-link-text-white">Assignment</div>
         </Link>
-        <Link to="/virtual-adult" className={`sidebar-link ${location.pathname === '/virtual-adult' ? 'active' : 'inactive'}`}>
+        <Link
+          to="/virtual-adult"
+          className={`sidebar-link ${location.pathname === "/virtual-adult" ? "active" : "inactive"}`}
+        >
           <div className="sidebar-link-icon">
-            {/* Add icon here */}
+            <Face2Icon sx={{ mr: 2 }} />
           </div>
           <div className="sidebar-link-text-white">Virtual Adult</div>
         </Link>
       </div>
       <div className="logout-frame">
         <div className="logout-button">
-          <div className="logout-icon">
-            {/* Add log out icon here */}
-          </div>
-          <div className="logout-text">Log out</div>
+          <button onClick={() => logout()} type="button">
+            <div className="logout-icon">
+              <LogoutIcon sx={{ mr: 2, color: "var(--text)" }} />
+            </div>
+            <div className="logout-text">Log out</div>
+          </button>
         </div>
       </div>
     </div>
