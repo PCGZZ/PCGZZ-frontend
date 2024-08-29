@@ -55,7 +55,6 @@
   font-weight: 600;
 }
 
-/* Log out Frame Styles */
 .logout-frame {
   display: flex;
   flex-direction: column;
@@ -63,7 +62,7 @@
   padding: 0px;
   gap: 10px;
   position: absolute;
-  width: 191.43px;
+  width: 191px;
   height: auto;
   left: 38.29px;
   bottom: 100px;
@@ -75,10 +74,17 @@
   flex-direction: row;
   align-items: center;
   padding: 10px 20px;
-  width: 191.43px;
+  width: 191px;
   height: 38.29px;
   background: var(--log-out);
-  border-radius: 7.66px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.lo-button{
+  display: flex;
+  align-items: center;
+  border-color: transparent;
   cursor: pointer;
 }
 
