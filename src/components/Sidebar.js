@@ -13,7 +13,7 @@ function Sidebar() {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate('https://pcgzz-frontend.vercel.app/');
   };
   return (
     <div className="sidebar">
