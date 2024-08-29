@@ -9,12 +9,14 @@ import LogoutIcon from '@mui/icons-material/Logout';
 function Sidebar() {
   const location = useLocation();
   const { logout } = useAuth0();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const deployPath = process.env.REACT_APP_DEPLOY_PATH;
 
   const handleLogout = () => {
-    logout();
-    navigate('https://pcgzz-frontend.vercel.app/');
+    logout({
+      returnTo: deployPath, // Redirect to the deployment path
+    });
   };
+
   return (
     <div className="sidebar">
       <div className="logo-design">

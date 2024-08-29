@@ -59,12 +59,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0px;
-  gap: 10px;
   position: absolute;
-  width: 191px;
+  width: 231px;
   height: auto;
-  left: 38.29px;
+  left: 15px;
   bottom: 100px;
 }
 
@@ -73,19 +71,22 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 10px 20px;
-  width: 191px;
-  height: 38.29px;
+  width: 231px;
+  height: 53px;
   background: var(--log-out);
   border-radius: 8px;
-  cursor: pointer;
 }
 
 .lo-button{
+  background: transparent;
   display: flex;
   align-items: center;
-  border-color: transparent;
+  padding: 10px 20px;
   cursor: pointer;
+  width: 231px;
+  height: 53px;
+  border-radius: 8px;
+  border: none;
 }
 
 .logout-icon {
