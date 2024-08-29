@@ -1,10 +1,20 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import '../styles/Login.css'; // Ensure you have a Login.css file for styling
-import deakinLogo from '../styles/image/deakin-university.png'; // Adjust the path if necessary
+import '../styles/Login.css';
+import deakinLogo from '../styles/image/deakin-university.png';
 
 function Login() {
-  const { loginWithRedirect, isAuthenticated, user } = useAuth0();
+  const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
+  const handleLogin = () => {
+    loginWithRedirect({
+      redirectUri: `${window.location.origin}/assignments`, // redirect to assignments page after login
+    });
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="login-container">
@@ -15,11 +25,7 @@ function Login() {
             className="deakin-logo"
           />
           <h1>Welcome</h1>
-          <button
-            className="login-button"
-            onClick={() => loginWithRedirect()}
-            type="button"
-          >
+          <button className="login-button" onClick={handleLogin} type="button">
             Log in
           </button>
         </div>
@@ -28,25 +34,12 @@ function Login() {
             Chat with your virtual adults now!!!
           </div>
           <div className="woman-with-tablet" />
-          {/* Updated to be self-closing */}
         </div>
       </div>
     );
   }
-  // if it's authenticated
-  return (
-    <div>
-      {user?.picture && <img src={user.picture} alt={user?.name} />}
-      <h2>{user?.name}</h2>
-      <ul>
-        {Object.keys(user).map((objKey) => (
-          <li key={objKey}>
-            {objKey}:{user[objKey]}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+
+  return null;
 }
 
 export default Login;
