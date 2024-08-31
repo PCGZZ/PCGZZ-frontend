@@ -1,70 +1,86 @@
-# Getting Started with Create React App
+## Read me carefully before starting to work :)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Table of Contents
+- Project Setup and Configuration
 
-## Available Scripts
+- Run / Dev / Test
 
-In the project directory, you can run:
+- Contribution Routine
 
-### `npm start`
+ 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Project Setup and Configuration
+1. Go to Your Local Working Directory
+Navigate to the directory on your machine where you want to set up the project.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2. Clone the Repository
+Clone the repository to your local machine using the following command:
 
-### `npm test`
+`git clone <repository-url>`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3. Ensure That You Have NPM Installed
+Make sure you have Node.js and npm installed on your system. You can check the installation by running:
 
-### `npm run build`
+`node -v npm -v`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. Navigate to the Project Directory
+Move into the project directory:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+`cd <project-directory>`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+5. Install Dependencies and Prepare Husky Package
+Install the necessary project dependencies and prepare Husky for managing Git hooks:
 
-### `npm run eject`
+`npm install && npm run prepare`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+6. Download the `.env` File
+Download the `.env` file provided by our team.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Place the `.env` file in the root of the project directory.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+ 
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Run / Dev / Test
+Start Running the Project
+For Development:
+`npm run dev`
 
-## Learn More
+For Production:
+`npm run start`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+For Testing:
+`npm run test`
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+ 
 
-### Code Splitting
+## Contribution Routine
+1. Create a Branch for a Specific Feature
+Always work on a separate branch for each feature. Create a new branch using:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+`git checkout -b <branch_name>`
 
-### Analyzing the Bundle Size
+2. Fix Eslint and Prettier Problems before Add All and Commit
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+`npm run fix`
 
-### Making a Progressive Web App
+3. Develop the feature with several commits
+The repository strictly follows the conventional commit format for writing commit messages. If the commit message does not follow the format, the commitlint hook will throw an error. You can use the commitizen CLI using the following command:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+`npm run commit`
 
-### Advanced Configuration
+4. Push to the Remote Branch
+Once you’re ready, push your branch to the remote repository:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+`git push origin <branch_name>`
 
-### Deployment
+5. Issue a Pull Request on GitHub
+Go to the repository on GitHub and create a pull request (PR) for your branch.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+6. Code Review
+The pull request will be reviewed by your peers. Make sure to address any feedback or requested changes.
 
-### `npm run build` fails to minify
+7. Merge to Main Branch
+After a successful review, the branch will be merged into the main branch.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+ 
+
