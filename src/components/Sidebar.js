@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import '../styles/sidebar.css';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Face2Icon from '@mui/icons-material/Face2';
@@ -9,11 +9,13 @@ import LogoutIcon from '@mui/icons-material/Logout';
 function Sidebar() {
   const location = useLocation();
   const { logout } = useAuth0();
-  const deployPath = process.env.REACT_APP_DEPLOY_PATH;
+  // const deployPath = process.env.REACT_APP_DEPLOY_PATH;
 
   const handleLogout = () => {
     logout({
-      returnTo: deployPath, // Redirect to the deployment path
+      logoutParams: {
+        returnTo: window.location.origin, // Redirect to the deployment path
+      },
     });
   };
 
