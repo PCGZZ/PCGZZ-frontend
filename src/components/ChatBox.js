@@ -13,25 +13,34 @@ function ChatBox() {
 
   const sendMessage = () => {
     if (!input || chances <= 0) return; // Prevent sending if input is empty or no chances left
-
+    const endpoint = process.env.REACT_APP_BACKEND_API || 'err'; // Update the endpoint
     // Reduce the chances by 1
     setChances(chances - 1);
 
     const newMessage = { text: input, sender: 'user' };
     setMessages([...messages, newMessage]);
-    fetch('http://localhost:3001/ai/demo/ask', {
+    console.log(
+      `${endpoint}/ai/demo/ask`,
+      JSON.stringify({
+        agent: '66c5965099528d233698d739',
+        question: input,
+      }),
+    );
+    fetch(`${endpoint}/ai/demo/ask`, {
       method: 'POST', // Specify the request method
+      mode: 'cors', // Add the CORS mode
       headers: {
         'Content-Type': 'application/json', // Set the content type
       },
       body: JSON.stringify({
         agent: '66c5965099528d233698d739',
         question: input,
-      }),
+      }), // Add the data
     })
       .then((response) => response.json()) // Parse the JSON from the response
       .then((data) => {
-        const botMessage = { text: data.ans, sender: 'bot' };
+        console.log(data);
+        const botMessage = { text: data.response, sender: 'bot' };
         setMessages([...messages, newMessage, botMessage]);
       })
       .catch((error) => {
