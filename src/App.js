@@ -5,6 +5,7 @@ import SearchBar from './components/SearchBar';
 import ChatBox from './components/ChatBox';
 import Assignments from './components/Assignments';
 import Login from './components/Login';
+import AssignmentList from './components/AssignmentList'; // Ensure you have this import
 import './styles/App.css';
 
 function App() {
@@ -15,6 +16,10 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/virtual-adult" element={<VirtualAdultPage />} />
           <Route path="/assignments" element={<AssignmentsPage />} />
+          <Route
+            path="/assignment-detail/:assignmentId"
+            element={<AssignmentList />}
+          />
         </Routes>
       </div>
     </Router>

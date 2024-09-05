@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Import Link
 import '../styles/assignments.css';
 
 function Assignments() {
@@ -17,7 +18,11 @@ function Assignments() {
         </thead>
         <tbody>
           <tr>
-            <td>Major Depressive Disorder</td>
+            <td>
+              <Link to="/assignment-detail/major-depressive-disorder">
+                Major Depressive Disorder
+              </Link>
+            </td>
             <td>10</td>
             <td>
               <span className="status not-started">Not started</span>
@@ -26,7 +31,11 @@ function Assignments() {
             <td>23/10/2024</td>
           </tr>
           <tr>
-            <td>Bipolar Disorder</td>
+            <td>
+              <Link to="/assignment-detail/bipolar-disorder">
+                Bipolar Disorder
+              </Link>
+            </td>
             <td>10</td>
             <td>
               <span className="status completed">Completed</span>
