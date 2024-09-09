@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // Import Link
-import '../styles/assignments.css';
+import '../styles/Assignments.css';
 
 function Assignments() {
   return (

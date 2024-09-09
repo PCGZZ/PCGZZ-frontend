@@ -5,7 +5,8 @@ import SearchBar from './components/SearchBar';
 import ChatBox from './components/ChatBox';
 import Assignments from './components/Assignments';
 import Login from './components/Login';
-import AssignmentList from './components/AssignmentList'; // Ensure you have this import
+import TeacherLogin from './components/TeacherLogin'; // Import TeacherLogin component
+import AssignmentList from './components/AssignmentList';
 import './styles/App.css';
 
 function App() {
@@ -14,12 +15,13 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/teacher-login" element={<TeacherLogin />} />
           <Route path="/virtual-adult" element={<VirtualAdultPage />} />
-          <Route path="/assignments" element={<AssignmentsPage />} />
           <Route
             path="/assignment-detail/:assignmentId"
             element={<AssignmentList />}
           />
+          <Route path="/assignments" element={<AssignmentsPage />} />
         </Routes>
       </div>
     </Router>
