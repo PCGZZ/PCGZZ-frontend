@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import SearchBar from './components/SearchBar';
 import ChatBox from './components/ChatBox';
 import Assignments from './components/Assignments';
+import AssignmentTeacherPage from './components/AssignmentTeacherPage'; // Import the teacher page
 import Login from './components/Login';
 import TeacherLogin from './components/TeacherLogin'; // Import TeacherLogin component
 import AssignmentList from './components/AssignmentList';
@@ -15,6 +16,10 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route
+            path="/teacher-assignments"
+            element={<AssignmentTeacherPage />}
+          />
           <Route path="/teacher-login" element={<TeacherLogin />} />
           <Route path="/virtual-adult" element={<VirtualAdultPage />} />
           <Route
