@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
 import deakinLogo from '../styles/image/deakin-university.png';
 
 function Login() {
   const { loginWithRedirect, isAuthenticated, isLoading } = useAuth0();
-  const handleLogin = () => {
-    loginWithRedirect({
-      redirectUri: `${window.location.origin}/assignments`, // redirect to assignments page after login
-    });
-  };
+  const navigate = useNavigate();
+  console.log(isAuthenticated);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/assignments');
+    }
+  }, [isAuthenticated, navigate]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -25,7 +29,11 @@ function Login() {
             className="deakin-logo"
           />
           <h1>Welcome</h1>
-          <button className="login-button" onClick={handleLogin} type="button">
+          <button
+            className="login-button"
+            onClick={() => loginWithRedirect({})}
+            type="button"
+          >
             Log in
           </button>
         </div>

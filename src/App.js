@@ -5,6 +5,7 @@ import SearchBar from './components/SearchBar';
 import ChatBox from './components/ChatBox';
 import Assignments from './components/Assignments';
 import Login from './components/Login';
+import Profile from './components/Profile';
 import './styles/App.css';
 
 function App() {
@@ -40,6 +41,7 @@ function AssignmentsPage() {
       <div className="main-layout">
         <Assignments />
       </div>
+      <Profile />
     </>
   );
 }
