@@ -9,6 +9,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN;
 const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID;
+const apiIdentifier = process.env.REACT_APP_AUTH0_API_IDENTIFIER;
 
 root.render(
   <React.StrictMode>
@@ -17,6 +18,8 @@ root.render(
       clientId={clientId}
       authorizationParams={{
         redirect_uri: window.location.origin,
+        audience: apiIdentifier,
+        scope: 'read:current_user update:current_user_metadata',
       }}
     >
       <App />
