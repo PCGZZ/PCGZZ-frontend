@@ -2,7 +2,9 @@ import axios from 'axios';
 import React, { useEffect, useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
+import { TEST_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import '../styles/Login.css';
+import fetchAccessToken from './Auth0_Authen';
 import deakinLogo from '../styles/image/deakin-university.png';
 
 function Login() {
@@ -14,14 +16,11 @@ function Login() {
     getAccessTokenWithPopup,
   } = useAuth0();
   const navigate = useNavigate();
-  const testApi = 'https://testing-43453241909.australia-southeast2.run.app';
-  const apiIdentifier = process.env.REACT_APP_API_IDENTIFIER;
-  const defaultScope =
-    'openid profile email read:current_user update:current_user_metadata';
 
+  // call api to login in DB
   const loginDB = useCallback(async (tok) => {
     await axios.post(
-      `${testApi}/users/loglogin`,
+      `${TEST_API}/users/loglogin`,
       {}, // no request body needed
       {
         headers: {
@@ -32,8 +31,9 @@ function Login() {
     );
   }, []);
 
+  // call api to get user information
   const getUser = useCallback(async (tok) => {
-    const res = await axios.get(`${testApi}/users/get`, {
+    const res = await axios.get(`${TEST_API}/users/get`, {
       headers: {
         Authorization: `Bearer ${tok}`,
         'Content-Type': 'application/json',
@@ -45,6 +45,7 @@ function Login() {
     }
   }, []);
 
+  // after getting token, hand to backend api to perform functions
   const handleTokenOperations = useCallback(
     async (tok) => {
       try {
@@ -59,44 +60,14 @@ function Login() {
     [getUser, loginDB],
   );
 
-  const getAccessTokenPopup = useCallback(async () => {
-    try {
-      const tok = await getAccessTokenWithPopup({
-        authorizationParams: {
-          audience: apiIdentifier,
-          scope: defaultScope,
-        },
-      });
-      console.log('Access Token popup:', tok);
-      await handleTokenOperations(tok);
-      return tok; // Return the token
-    } catch (error) {
-      // Check if popup blocking leads to the error
-      if (error.message.includes('popup')) {
-        alert('Please turn off popup blocking settings and start again');
-      } else {
-        alert('Failed to get token via popup: ', error.message);
-      }
-      return null; // Return null if there is an error
-    }
-  }, [apiIdentifier, getAccessTokenWithPopup, handleTokenOperations]);
-
+  // fetch token from auth0 and perform functions with token
   const fetchAndHandleToken = useCallback(async () => {
-    let token = null;
-    try {
-      // Get access token silently
-      token = await getAccessTokenSilently({
-        authorizationParams: {
-          audience: apiIdentifier,
-          scope: defaultScope,
-        },
-      });
-      console.log('Access Token silently:', token);
-    } catch (error) {
-      console.error('Failed to get token silently:', error);
-      // If silently get access token unsuccessful, try using popup
-      token = await getAccessTokenPopup();
-    }
+    const token = await fetchAccessToken({
+      getAccessTokenSilently,
+      getAccessTokenWithPopup,
+      AUTH0_API_IDENTIFIER,
+      AUTH0_SCOPE,
+    });
 
     if (token) {
       await handleTokenOperations(token);
@@ -104,17 +75,12 @@ function Login() {
       console.error('No token available after all attempts.');
       alert('Please turn off popup blocking settings and start again');
     }
-  }, [
-    apiIdentifier,
-    getAccessTokenSilently,
-    getAccessTokenPopup,
-    handleTokenOperations,
-  ]);
+  }, [getAccessTokenSilently, getAccessTokenWithPopup, handleTokenOperations]);
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchAndHandleToken();
-      navigate('/assignments');
+      // navigate('/assignments');
     }
   }, [navigate, isAuthenticated, fetchAndHandleToken]);
 
