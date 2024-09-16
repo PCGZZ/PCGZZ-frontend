@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
@@ -10,93 +10,113 @@ function Login() {
     loginWithRedirect,
     isAuthenticated,
     isLoading,
-    getIdTokenClaims,
     getAccessTokenSilently,
+    getAccessTokenWithPopup,
   } = useAuth0();
   const navigate = useNavigate();
-  const backendApi = 'http://localhost:3001';
+  const testApi = 'https://testing-43453241909.australia-southeast2.run.app';
   const apiIdentifier = process.env.REACT_APP_API_IDENTIFIER;
+  const defaultScope =
+    'openid profile email read:current_user update:current_user_metadata';
 
-  const loginDB = (token) => {
-    console.log('Posting to URL:', `${backendApi}/loglogin`);
-    axios.post(
-      `${backendApi}/loglogin`,
+  const loginDB = useCallback(async (tok) => {
+    await axios.post(
+      `${testApi}/users/loglogin`,
       {}, // no request body needed
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tok}`,
           'Content-Type': 'application/json',
         },
       },
     );
-  };
+  }, []);
 
-  const getUser = async (token) => {
-    const res = await axios.get(`${backendApi}/get`, {
+  const getUser = useCallback(async (tok) => {
+    const res = await axios.get(`${testApi}/users/get`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${tok}`,
+        'Content-Type': 'application/json',
       },
     });
 
     if (res.data.ok === true) {
       return res.data.user;
     }
-  };
+  }, []);
 
-  const handleTokenOperations = async (token) => {
+  const handleTokenOperations = useCallback(
+    async (tok) => {
+      try {
+        await loginDB(tok);
+        const user = await getUser(tok);
+        console.log('User:', user);
+      } catch (error) {
+        console.error('Error in handling token:', error);
+        console.log('handle token:', tok);
+      }
+    },
+    [getUser, loginDB],
+  );
+
+  const getAccessTokenPopup = useCallback(async () => {
     try {
-      await loginDB(token);
-      const user = await getUser(token);
-      console.log('User:', user);
+      const tok = await getAccessTokenWithPopup({
+        authorizationParams: {
+          audience: apiIdentifier,
+          scope: defaultScope,
+        },
+      });
+      console.log('Access Token popup:', tok);
+      await handleTokenOperations(tok);
+      return tok; // Return the token
     } catch (error) {
-      console.error('处理 token 时发生错误:', error);
+      // Check if popup blocking leads to the error
+      if (error.message.includes('popup')) {
+        alert('Please turn off popup blocking settings and start again');
+      } else {
+        alert('Failed to get token via popup: ', error.message);
+      }
+      return null; // Return null if there is an error
     }
-  };
+  }, [apiIdentifier, getAccessTokenWithPopup, handleTokenOperations]);
 
-  // get access token version
-  // const fetchTokenAndPerformActions = async () => {
-  //   try {
-  //     // 获取 Access Token
-  //     const token = await getAccessTokenSilently({
-  //       authorizationParams: {
-  //         audience: apiIdentifier, // 确保与 Auth0Provider 中的 audience 一致
-  //         scope:
-  //           'openid profile email read:current_user update:current_user_metadata', // 确保 scope 一致
-  //       },
-  //     });
-
-  //     console.log('Access Token:', token);
-
-  //     // 如果需要获取 ID Token
-  //     // const idTokenClaims = await getIdTokenClaims();
-  //     // const idToken = idTokenClaims.__raw;
-  //     // console.log('ID Token:', idToken);
-
-  //     // 处理 token
-  //     await handleTokenOperations(token);
-  //   } catch (error) {
-  //     console.error('获取 token 失败:', error);
-  //   }
-  // };
-
-  // get id token version
-  const fetchTokenAndPerformActions = async () => {
+  const fetchAndHandleToken = useCallback(async () => {
+    let token = null;
     try {
-      const token = await getIdTokenClaims();
-      const rawToken = token.__raw;
-      console.log(rawToken);
-
-      // login in db & get user information
-      await handleTokenOperations(rawToken);
+      // Get access token silently
+      token = await getAccessTokenSilently({
+        authorizationParams: {
+          audience: apiIdentifier,
+          scope: defaultScope,
+        },
+      });
+      console.log('Access Token silently:', token);
     } catch (error) {
-      console.error('获取 ID Token 失败:', error);
+      console.error('Failed to get token silently:', error);
+      // If silently get access token unsuccessful, try using popup
+      token = await getAccessTokenPopup();
     }
-  };
 
-  if (isAuthenticated) {
-    console.log(1);
-    fetchTokenAndPerformActions();
-  }
+    if (token) {
+      await handleTokenOperations(token);
+    } else {
+      console.error('No token available after all attempts.');
+      alert('Please turn off popup blocking settings and start again');
+    }
+  }, [
+    apiIdentifier,
+    getAccessTokenSilently,
+    getAccessTokenPopup,
+    handleTokenOperations,
+  ]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchAndHandleToken();
+      navigate('/assignments');
+    }
+  }, [navigate, isAuthenticated, fetchAndHandleToken]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -114,7 +134,7 @@ function Login() {
           <h1>Welcome</h1>
           <button
             className="login-button"
-            onClick={loginWithRedirect()}
+            onClick={loginWithRedirect}
             type="button"
           >
             Log in
