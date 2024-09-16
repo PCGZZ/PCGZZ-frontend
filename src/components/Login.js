@@ -80,7 +80,7 @@ function Login() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchAndHandleToken();
-      // navigate('/assignments');
+      navigate('/assignments');
     }
   }, [navigate, isAuthenticated, fetchAndHandleToken]);
 
