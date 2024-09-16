@@ -4,7 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import { TEST_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import '../styles/Login.css';
-import fetchAccessToken from './Auth0_Authen';
+import fetchAccessToken from './Auth0Authen';
 import deakinLogo from '../styles/image/deakin-university.png';
 
 function Login() {
@@ -40,7 +40,7 @@ function Login() {
       },
     });
 
-    if (res.data.ok === true) {
+    if (res.data.ok) {
       return res.data.user;
     }
   }, []);

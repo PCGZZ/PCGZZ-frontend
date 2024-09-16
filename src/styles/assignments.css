@@ -31,9 +31,10 @@
   /* Status Styles */
   .status {
     padding: 5px 10px;
-    border-radius: 12px;
+    border-radius: 10px;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 13px;
+    font-family: 'Open Sans';
   }
   
   .status.not-started {
@@ -44,5 +45,11 @@
   .status.completed {
     background-color: var(--main);
     color: var(--white);
+  }
+
+  .status.in-progress {
+    background-color: #1d82ede8;
+    color: var(--white);
+    font-weight: bolder;
   }
   
