@@ -33,7 +33,7 @@ function Assignments() {
 
   const retrieveAsmts = useCallback(async (tok) => {
     try {
-      const res = await axios.get(`${test}/assignment/list`, {
+      const res = await axios.get(`${BACKEND_API}/assignment/list`, {
         headers: {
           Authorization: `Bearer ${tok}`,
           'Content-Type': 'application/json',
