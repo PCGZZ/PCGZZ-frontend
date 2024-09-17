@@ -8,8 +8,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 function Sidebar() {
   const location = useLocation();
-  const { logout } = useAuth0();
-  // const deployPath = process.env.REACT_APP_DEPLOY_PATH;
+  const { logout, isAuthenticated } = useAuth0();
 
   const handleLogout = () => {
     logout({
@@ -20,42 +19,44 @@ function Sidebar() {
   };
 
   return (
-    <div className="sidebar">
-      <div className="logo-design">
-        <Face2Icon sx={{ mr: 2 }} />
-        Virtual Adults.
-      </div>
-      <div className="sidebar-links">
-        <Link
-          to="/assignments"
-          className={`sidebar-link ${location.pathname === '/assignments' ? 'active' : 'inactive'}`}
-        >
-          <div className="sidebar-link-icon">
-            <AssignmentIcon sx={{ mr: 2 }} />
-          </div>
-          <div className="sidebar-link-text-white">Assignment</div>
-        </Link>
-        <Link
-          to="/virtual-adult"
-          className={`sidebar-link ${location.pathname === '/virtual-adult' ? 'active' : 'inactive'}`}
-        >
-          <div className="sidebar-link-icon">
-            <Face2Icon sx={{ mr: 2 }} />
-          </div>
-          <div className="sidebar-link-text-white">Virtual Adult</div>
-        </Link>
-      </div>
-      <div className="logout-frame">
-        <div className="logout-button">
-          <button className="lo-button" onClick={handleLogout} type="button">
-            <div className="logout-icon">
-              <LogoutIcon sx={{ mr: 2, color: 'var(--text)' }} />
+    isAuthenticated && (
+      <div className="sidebar">
+        <div className="logo-design">
+          <Face2Icon sx={{ mr: 2 }} />
+          Virtual Adults.
+        </div>
+        <div className="sidebar-links">
+          <Link
+            to="/assignments"
+            className={`sidebar-link ${location.pathname === '/assignments' ? 'active' : 'inactive'}`}
+          >
+            <div className="sidebar-link-icon">
+              <AssignmentIcon sx={{ mr: 2 }} />
             </div>
-            <div className="logout-text">Log out</div>
-          </button>
+            <div className="sidebar-link-text-white">Assignment</div>
+          </Link>
+          <Link
+            to="/virtual-adult"
+            className={`sidebar-link ${location.pathname === '/virtual-adult' ? 'active' : 'inactive'}`}
+          >
+            <div className="sidebar-link-icon">
+              <Face2Icon sx={{ mr: 2 }} />
+            </div>
+            <div className="sidebar-link-text-white">Virtual Adult</div>
+          </Link>
+        </div>
+        <div className="logout-frame">
+          <div className="logout-button">
+            <button className="lo-button" onClick={handleLogout} type="button">
+              <div className="logout-icon">
+                <LogoutIcon sx={{ mr: 2, color: 'var(--text)' }} />
+              </div>
+              <div className="logout-text">Log out</div>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    )
   );
 }
 

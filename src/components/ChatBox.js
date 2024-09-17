@@ -3,6 +3,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { IconButton } from '@mui/material';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import '../styles/ChatBox.css';
+import { BACKEND_API } from '../config';
 import avatarKris from '../styles/image/avatar_account.jpg'; // Adjust the path
 import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
 
@@ -13,7 +14,6 @@ function ChatBox() {
 
   const sendMessage = () => {
     if (!input || chances <= 0) return; // Prevent sending if input is empty or no chances left
-    const endpoint = process.env.REACT_APP_BACKEND_API || 'err'; // Update the endpoint
     // Reduce the chances by 1
     setChances(chances - 1);
 
@@ -22,14 +22,13 @@ function ChatBox() {
 
     // eslint-disable-next-line
     console.log(
-      `${endpoint}/ai/demo/ask`,
+      `${BACKEND_API}/ai/demo/ask`,
       JSON.stringify({
         agent: '66c5965099528d233698d739',
         question: input,
       }),
     );
-
-    fetch(`${endpoint}/ai/demo/ask`, {
+    fetch(`${BACKEND_API}/ai/demo/ask`, {
       method: 'POST', // Specify the request method
       mode: 'cors', // Add the CORS mode
       headers: {
