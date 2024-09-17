@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { withAuthenticationRequired } from '@auth0/auth0-react';
 import Sidebar from './components/Sidebar';
 import SearchBar from './components/SearchBar';
 import ChatBox from './components/ChatBox';
@@ -7,18 +8,9 @@ import Assignments from './components/Assignments';
 import Login from './components/Login';
 import './styles/App.css';
 
-function App() {
-  return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/virtual-adult" element={<VirtualAdultPage />} />
-          <Route path="/assignments" element={<AssignmentsPage />} />
-        </Routes>
-      </div>
-    </Router>
-  );
+function ProtectedRoute({ component, ...args }) {
+  const Component = withAuthenticationRequired(component, args);
+  return <Component />;
 }
 
 function VirtualAdultPage() {
@@ -41,6 +33,26 @@ function AssignmentsPage() {
         <Assignments />
       </div>
     </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route
+            path="/virtual-adult"
+            element={<ProtectedRoute component={VirtualAdultPage} />}
+          />
+          <Route
+            path="/assignments"
+            element={<ProtectedRoute component={AssignmentsPage} />}
+          />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
