@@ -43,7 +43,7 @@ function Assignments() {
         console.log('asmts:', res.data.assignments);
         return res.data.assignments;
       }
-      console.error('Failed to get assignment lists', res.data.message);
+      console.log('message:', res.data.message);
     } catch (error) {
       console.error('Error fetching assignments:', error);
     }
