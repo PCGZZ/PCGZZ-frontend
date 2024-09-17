@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useCallback } from 'react';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
-import { TEST_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
+import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import '../styles/Login.css';
 import fetchAccessToken from './Auth0Authen';
 import deakinLogo from '../styles/image/deakin-university.png';
@@ -20,7 +20,7 @@ function Login() {
   // call api to login in DB
   const loginDB = useCallback(async (tok) => {
     await axios.post(
-      `${TEST_API}/users/loglogin`,
+      `${BACKEND_API}/users/loglogin`,
       {}, // no request body needed
       {
         headers: {
@@ -33,7 +33,7 @@ function Login() {
 
   // call api to get user information
   const getUser = useCallback(async (tok) => {
-    const res = await axios.get(`${TEST_API}/users/get`, {
+    const res = await axios.get(`${BACKEND_API}/users/get`, {
       headers: {
         Authorization: `Bearer ${tok}`,
         'Content-Type': 'application/json',
