@@ -107,7 +107,9 @@ function Assignments() {
               </tr>
             ))
           ) : (
-            <tr colSpan="5">You Have No assignments!</tr>
+            <tr>
+              <td colSpan="5">No assignments.</td>
+            </tr>
           )}
         </tbody>
       </table>
