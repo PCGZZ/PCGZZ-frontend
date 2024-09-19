@@ -53,6 +53,18 @@ function App() {
             path="/assignments"
             element={<ProtectedRoute component={AssignmentsPage} />}
           />
+          <Route
+            path="/teacher-login"
+            element={<ProtectedRoute component={TeacherLogin} />}
+          />
+          <Route
+            path="/teacher-assignments"
+            element={<ProtectedRoute component={AssignmentTeacherPage} />}
+          />
+          <Route
+            path="/assignment-detail/:assignmentId"
+            element={<ProtectedRoute component={AssignmentList} />}
+          />
         </Routes>
       </div>
     </Router>

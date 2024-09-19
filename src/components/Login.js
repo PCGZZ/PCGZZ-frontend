@@ -17,10 +17,6 @@ function Login() {
   } = useAuth0();
   const navigate = useNavigate();
 
-  const handleTeacherLogin = () => {
-    navigate('/teacher-login'); // Navigate to the teacher login page
-  };
-
   // call api to login in DB
   const loginDB = useCallback(async (tok) => {
     await axios.post(
@@ -35,8 +31,8 @@ function Login() {
     );
   }, []);
 
-  // call api to get user information
-  const getUser = useCallback(async (tok) => {
+  // getUserRole function: gets the user role from the backend
+  const getUserRole = useCallback(async (tok) => {
     const res = await axios.get(`${BACKEND_API}/users/get`, {
       headers: {
         Authorization: `Bearer ${tok}`,
@@ -45,46 +41,63 @@ function Login() {
     });
 
     if (res.data.ok) {
-      return res.data.user;
+      return res.data.user.role;
     }
+    throw new Error('Failed to fetch user role');
   }, []);
 
-  // after getting token, hand to backend api to perform functions
+  // handleTokenOperations: logs the user and gets the role
   const handleTokenOperations = useCallback(
     async (tok) => {
       try {
         await loginDB(tok);
-        const user = await getUser(tok);
-        console.log('User:', user);
+        const role = await getUserRole(tok);
+        console.log('Role:', role);
+        return role;
       } catch (error) {
         console.error('Error in handling token:', error);
-        console.log('handle token:', tok);
       }
     },
-    [getUser, loginDB],
+    [getUserRole, loginDB],
   );
 
-  // fetch token from auth0 and perform functions with token
+  // fetchAndHandleToken: fetches the token from auth0 and handles it
   const fetchAndHandleToken = useCallback(async () => {
-    const token = await fetchAccessToken({
-      getAccessTokenSilently,
-      getAccessTokenWithPopup,
-      AUTH0_API_IDENTIFIER,
-      AUTH0_SCOPE,
-    });
+    try {
+      const token = await fetchAccessToken({
+        getAccessTokenSilently,
+        getAccessTokenWithPopup,
+        AUTH0_API_IDENTIFIER,
+        AUTH0_SCOPE,
+      });
 
-    if (token) {
-      await handleTokenOperations(token);
-    } else {
+      if (token) {
+        const role = await handleTokenOperations(token);
+        return role;
+      }
       console.error('No token available after all attempts.');
       alert('Please turn off popup blocking settings and start again');
+    } catch (error) {
+      console.error('Error fetching and handling token:', error);
     }
   }, [getAccessTokenSilently, getAccessTokenWithPopup, handleTokenOperations]);
 
+  // useEffect: fetch token and navigate based on the role
   useEffect(() => {
     if (isAuthenticated) {
-      fetchAndHandleToken();
-      navigate('/assignments');
+      fetchAndHandleToken()
+        .then((role) => {
+          if (role === 'educator') {
+            navigate('/teacher-assignments');
+          } else if (role === 'student') {
+            navigate('/assignments');
+          } else {
+            console.error('Unknown role:', role);
+          }
+        })
+        .catch((error) => {
+          console.error('Error navigating based on role:', error);
+        });
     }
   }, [navigate, isAuthenticated, fetchAndHandleToken]);
 
@@ -108,14 +121,6 @@ function Login() {
             type="button"
           >
             Log in
-          </button>
-          {/* Add Teacher Login button below the student login */}
-          <button
-            className="teacher-login-button"
-            onClick={handleTeacherLogin}
-            type="button"
-          >
-            Teacher Log in
           </button>
         </div>
         <div className="login-right">

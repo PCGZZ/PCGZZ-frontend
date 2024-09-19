@@ -1,21 +1,3 @@
-/* AssignmentTeacherPage.css */
-
-.main-content {
-    margin-top: 102.9px;
-    padding: 40px;
-    padding-left: 280px;
-    background-color: var(--white);
-}
-
-/* Title Styling - Similar to "New Assignment" */
-.sub-heading {
-    font-size: 28px; /* Match font size with New Assignment title */
-    font-weight: 600; /* Make the text bold */
-    color: rgba(67, 66, 66, 0.87);
-    margin-bottom: 30px;
-    text-align: left;
-    margin-left: 300px; /* Adjust margin for positioning */
-}
 
 /* Buttons for actions */
 .assignment-actions {
