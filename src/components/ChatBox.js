@@ -19,6 +19,8 @@ function ChatBox() {
 
     const newMessage = { text: input, sender: 'user' };
     setMessages([...messages, newMessage]);
+
+    // eslint-disable-next-line
     console.log(
       `${BACKEND_API}/ai/demo/ask`,
       JSON.stringify({
@@ -39,11 +41,13 @@ function ChatBox() {
     })
       .then((response) => response.json()) // Parse the JSON from the response
       .then((data) => {
+        // eslint-disable-next-line
         console.log(data);
         const botMessage = { text: data.response, sender: 'bot' };
         setMessages([...messages, newMessage, botMessage]);
       })
       .catch((error) => {
+        // eslint-disable-next-line
         console.error('Error:', error); // Handle errors
       });
 

@@ -6,7 +6,7 @@
 
 .login-left {
   width: 30%; /* Make the left side 30% of the page */
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -21,7 +21,7 @@
 }
 
 .login-button {
-  background-color: #60D1C4;
+  background-color: #60d1c4;
   border: none;
   border-radius: 8px;
   color: #fff;
@@ -32,7 +32,7 @@
 
 .login-right {
   width: 70%; /* Make the right side 70% of the page */
-  background-color: #A0E6DC;
+  background-color: #a0e6dc;
   background-image: url('../styles/image/login.svg'); /* Ensure the correct path */
   background-size: cover; /* Cover the entire right side */
   background-position: left center; /* Shift the image slightly to the left */
@@ -45,7 +45,7 @@
 .login-right .login-message {
   font-size: 80px; /* Increase font size */
   font-weight: bold;
-  color: #FFFFFF;
+  color: #ffffff;
   text-align: left; /* Align text to the left */
   z-index: 1; /* Ensure the text stays on top */
   max-width: 400px; /* Optional: Limit the width of the text */

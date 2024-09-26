@@ -1,33 +1,33 @@
 {
-    "extends": ["airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
-    "env": {
-      "browser": true,
-      "node": true
-    },
+  "extends": ["airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "jest": true
+  },
 
-    "rules": {
-      // Custom rules can be added here
-      "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-      "import/prefer-default-export": "off",
-      "react/prop-types": "off",
-      "func-names": "off",
-      "no-underscore-dangle": "off",
-      "consistent-return": "off",
-      "no-unused-vars": "warn",
-      "no-trailing-spaces": "warn"
-    },
+  "rules": {
+    // Custom rules can be added here
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "import/prefer-default-export": "off",
+    "react/prop-types": "off",
+    "func-names": "off",
+    "no-underscore-dangle": "off",
+    "consistent-return": "off",
+    "no-unused-vars": "warn",
+    "no-trailing-spaces": "warn"
+  },
 
-    "settings": {
-      "import/resolver": {
-        "node": {
-          "extensions": [".js", ".jsx"]
-        }
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx"]
       }
-    },
-
-    "parserOptions": {
-      "ecmaVersion": 2020,
-      "sourceType": "module"
     }
+  },
 
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
   }
+}
