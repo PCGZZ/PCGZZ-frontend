@@ -27,7 +27,6 @@ const getStatus = (releaseDate, closeDate) => {
 };
 
 function Assignments() {
-  const test = 'http://localhost:3001';
   const [assignments, setAssignments] = useState(null);
   const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
 
@@ -40,10 +39,10 @@ function Assignments() {
         },
       });
       if (res.data.ok) {
-        console.log('asmts:', res.data.assignments);
+        // console.log('asmts:', res.data.assignments);
         return res.data.assignments;
       }
-      console.log('message:', res.data.message);
+      // console.log('message:', res.data.message);
     } catch (error) {
       console.error('Error fetching assignments:', error);
     }
@@ -58,7 +57,7 @@ function Assignments() {
         AUTH0_API_IDENTIFIER,
         AUTH0_SCOPE,
       });
-      console.log('Access Token:', token);
+      console.log('Access Token');
 
       // call api to fetch assignment lists
       if (token) {

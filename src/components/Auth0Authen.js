@@ -14,9 +14,9 @@ const fetchAccessToken = async ({
         scope: AUTH0_SCOPE,
       },
     });
-    console.log('Access Token silently:', token);
+    // console.log('Access Token silently');
   } catch (error) {
-    console.error('Failed to get token silently:', error);
+    // console.error('Failed to get token silently');
 
     // if failed, try getAccessTokenWithPopup. This method should work at localhost env
     try {
@@ -26,7 +26,7 @@ const fetchAccessToken = async ({
           scope: AUTH0_SCOPE,
         },
       });
-      console.log('Access Token via popup:', token);
+      console.log('Access Token via popup');
     } catch (popupError) {
       console.error('Failed to get token via popup:', popupError);
       if (popupError.message.includes('popup')) {
