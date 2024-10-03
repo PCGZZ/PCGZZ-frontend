@@ -14,7 +14,7 @@
   font-family: 'Open Sans', sans-serif;
   font-weight: 600;
   font-size: 24px;
-  color: #339cab;
+  color: #339CAB;
   margin-bottom: 20px;
 }
 
@@ -26,8 +26,8 @@
 }
 
 .assignment-section {
-  background: #ffffff;
-  border: 1px solid #eff0f7;
+  background: #FFFFFF;
+  border: 1px solid #EFF0F7;
   box-shadow: 0px 2px 6px rgba(19, 18, 66, 0.07);
   border-radius: 21px;
   padding: 20px;
@@ -56,11 +56,10 @@
   margin-top: 30px;
 }
 
-.release-date,
-.close-date {
+.release-date, .close-date {
   width: 48%;
-  background: #ffffff;
-  border: 1px solid #eff0f7;
+  background: #FFFFFF;
+  border: 1px solid #EFF0F7;
   box-shadow: 0px 2px 6px rgba(19, 18, 66, 0.07);
   border-radius: 21px;
   padding: 20px;
@@ -86,14 +85,14 @@
   font-weight: 800;
   font-size: 24px;
   line-height: 33px;
-  color: #1b6d87;
+  color: #1B6D87;
   opacity: 0.4;
 }
 
 .chatbox-icon {
   width: 30px;
   height: 30px;
-  border: 2px solid #339cab;
+  border: 2px solid #339CAB;
   border-radius: 50%;
   background: transparent;
 }

@@ -1,10 +1,18 @@
+/* Main content container */
+.main-content {
+  width: 75%; /* Adjust this width as needed */
+  margin-left: auto; /* This pushes the content to the right */
+  margin-right: 20px; /* Add some spacing on the right side */
+  padding: 20px;
+  background-color: #fff; /* Ensure background is visible */
+}
+
 /* Buttons for actions */
 .assignment-actions {
   display: flex;
   justify-content: flex-end;
   gap: 15px;
-  margin-bottom: 10px;
-  margin-right: 10px;
+  margin-bottom: 20px;
 }
 
 /* Updated Button Styles */
@@ -14,12 +22,12 @@
   justify-content: center;
   align-items: center;
   padding: 15px 20px;
-  width: 204.49px;
-  height: 54.49px;
+  width: 204px;
+  height: 54px;
   background-color: #60d1c4;
   color: white;
   border: none;
-  border-radius: 8.16px;
+  border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
 }
@@ -33,7 +41,12 @@
 .assignments-table {
   width: 100%;
   border-collapse: collapse;
-  margin-left: 20px;
+  margin-top: 20px;
+  margin-left: auto; /* Pushes table to the right */
+  margin-right: 20px; /* Spacing on the right */
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .assignments-table th,
@@ -41,28 +54,36 @@
   text-align: left;
   padding: 10px 15px;
   border-bottom: 1.5px solid var(--table-line);
-  padding-right: 100px;
 }
 
 .assignments-table th {
-  background-color: var(--white);
+  background-color: #f9f9f9;
+  font-weight: 600;
 }
 
-.assignments-table input[type='text'] {
-  width: 100%;
-  padding: 5px;
+.assignments-table td {
+  background-color: #fff;
+}
+
+/* Input field inside the table */
+.assignments-table input[type="text"] {
+  width: 95%; /* Adjust width inside table cells */
+  padding: 6px;
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
+/* Select dropdown styling */
 .assignments-table select {
-  padding: 5px;
-  border-radius: 5px;
+  width: 95%; /* Adjust width for select dropdown */
+  padding: 6px;
+  border-radius: 4px;
   border: 1px solid #ddd;
 }
 
+/* Delete button styling */
 .delete-button {
-  padding: 5px 10px;
+  padding: 6px 12px;
   background-color: #ff6b6b;
   color: white;
   border: none;
