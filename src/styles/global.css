@@ -1,49 +1,53 @@
 /* Global styles, including resets and typography */
 body {
-    margin: 0;
-    font-family: 'Open Sans', sans-serif;
-    background-color: var(--white);
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    margin: 0;
-  }
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  background-color: var(--white);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
 
 :root {
-
   /* Color styles */
---white: rgba(255, 255, 255, 1);
---text: rgba(27, 26, 26, 0.85);
---light-in-text:rgba(130, 130, 130, 1);
---button:rgba(51, 156, 171, 0.42);
---lightest: rgba(197, 252, 255, 0.2);
+  --white: rgba(255, 255, 255, 1);
+  --text: rgba(27, 26, 26, 0.85);
+  --light-in-text: rgba(130, 130, 130, 1);
+  --button: rgba(51, 156, 171, 0.42);
+  --lightest: rgba(197, 252, 255, 0.2);
 
---main: rgba(96, 209, 196, 1);
---darker: rgba(51, 156, 171, 1);
---lighter: rgba(137, 223, 223, 0.46000000834465027);
+  --main: rgba(96, 209, 196, 1);
+  --darker: rgba(51, 156, 171, 1);
+  --lighter: rgba(137, 223, 223, 0.46000000834465027);
 
---table-line: rgba(242, 242, 242, 1);
---log-out: rgba(98, 91, 113, 0.08);
+  --table-line: rgba(242, 242, 242, 1);
+  --log-out: rgba(98, 91, 113, 0.08);
 
-/* Font family */
---main-font: 'Open Sans', sans-serif;
+  /* Font family */
+  --main-font: 'Open Sans', sans-serif;
 
-/* Text-size styles */
---sub-heading: 24px;
---button-text: 20px;
---small-text: 14px;
---message: 20px;
---heading: 36px;
---status-text: 13px;
---smallest: 11px;
---form-question: 20px;
---transcripts: 15px;
---saved-description: 18px;
---table--text: 17px;
---table--header: 17px;
---input--test: 24px;
+  /* Text-size styles */
+  --sub-heading: 24px;
+  --button-text: 20px;
+  --small-text: 14px;
+  --message: 20px;
+  --heading: 36px;
+  --status-text: 13px;
+  --smallest: 11px;
+  --form-question: 20px;
+  --transcripts: 15px;
+  --saved-description: 18px;
+  --table--text: 17px;
+  --table--header: 17px;
+  --input--test: 24px;
 
-/* Effect styles 某些button用的阴影*/
---chatbox-shadow:  4px 4px 20px rgba(143, 223, 228, 0.3), 0px 2px 2px rgba(30, 30, 30, 0.1);
-
+  /* Effect styles 某些button用的阴影*/
+  --chatbox-shadow: 4px 4px 20px rgba(143, 223, 228, 0.3),
+    0px 2px 2px rgba(30, 30, 30, 0.1);
 }

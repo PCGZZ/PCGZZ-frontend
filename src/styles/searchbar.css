@@ -1,57 +1,56 @@
 /* SearchBar.css */
 
 .search-bar {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 25.2px;
-    width: 913.5px;
-    height: 50.4px;
-    border: 1px solid var(--table-line);
-    border-radius: 8.4px;
-    position: relative;
-    left: -210px;
-    margin: 0 auto;
-  }
-  
-  .search-bar input {
-    border: none;
-    outline: none;
-    width: 100%;
-    font-family: var(--main);
-    font-size: 17px;
-    color: var(--light-in-text);
-  }
-  
-  .search-icon {
-    width: 25.2px;
-    height: 25.2px;
-  }
-  
-  .user-section {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 12.6px;
-    position: absolute;
-    right: 300px;
-    top: 20px;
-  }
-  
-  .notification-icon {
-    width: 25.2px;
-    height: 25.2px;
-    background-size: cover;
-    background-position: center;
-  }
-  
-  .user-avatar {
-    width: 46.2px;
-    height: 46.2px;
-    border-radius: 50%;
-    background-image: url('../styles/image/avatar_account.jpg');
-    background-size: cover;
-    background-position: center;
-  }
-  
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25.2px;
+  width: 913.5px;
+  height: 50.4px;
+  border: 1px solid var(--table-line);
+  border-radius: 8.4px;
+  position: relative;
+  left: -210px;
+  margin: 0 auto;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-family: var(--main);
+  font-size: 17px;
+  color: var(--light-in-text);
+}
+
+.search-icon {
+  width: 25.2px;
+  height: 25.2px;
+}
+
+.user-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12.6px;
+  position: absolute;
+  right: 300px;
+  top: 20px;
+}
+
+.notification-icon {
+  width: 25.2px;
+  height: 25.2px;
+  background-size: cover;
+  background-position: center;
+}
+
+.user-avatar {
+  width: 46.2px;
+  height: 46.2px;
+  border-radius: 50%;
+  background-image: url('../styles/image/avatar_account.jpg');
+  background-size: cover;
+  background-position: center;
+}

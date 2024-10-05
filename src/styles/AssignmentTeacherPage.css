@@ -1,0 +1,96 @@
+/* Main content container */
+.main-content {
+  width: 75%; /* Adjust this width as needed */
+  margin-left: auto; /* This pushes the content to the right */
+  margin-right: 20px; /* Add some spacing on the right side */
+  padding: 20px;
+  background-color: #fff; /* Ensure background is visible */
+}
+
+/* Buttons for actions */
+.assignment-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Updated Button Styles */
+.new-assignment-button,
+.edit-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 20px;
+  width: 204px;
+  height: 54px;
+  background-color: #60d1c4;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.new-assignment-button:hover,
+.edit-button:hover {
+  background-color: #4bb7a8;
+}
+
+/* Table Styling */
+.assignments-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin-left: auto; /* Pushes table to the right */
+  margin-right: 20px; /* Spacing on the right */
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.assignments-table th,
+.assignments-table td {
+  text-align: left;
+  padding: 10px 15px;
+  border-bottom: 1.5px solid var(--table-line);
+}
+
+.assignments-table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+}
+
+.assignments-table td {
+  background-color: #fff;
+}
+
+/* Input field inside the table */
+.assignments-table input[type="text"] {
+  width: 95%; /* Adjust width inside table cells */
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Select dropdown styling */
+.assignments-table select {
+  width: 95%; /* Adjust width for select dropdown */
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+/* Delete button styling */
+.delete-button {
+  padding: 6px 12px;
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: #d55d5d;
+}
