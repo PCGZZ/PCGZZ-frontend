@@ -6,6 +6,7 @@ import SearchBar from './components/SearchBar';
 import ChatBox from './components/ChatBox';
 import Assignments from './components/Assignments';
 import Login from './components/Login';
+import VoiceChatBox from './components/VoiceChatBox';
 import './styles/App.css';
 
 function ProtectedRoute({ component, ...args }) {
@@ -36,6 +37,17 @@ function AssignmentsPage() {
   );
 }
 
+function VoiceAdultPage() {
+  return (
+    <>
+      <Sidebar />
+      <div className="main-layout">
+        <VoiceChatBox />
+      </div>
+    </>
+  );
+}
+
 function App() {
   return (
     <Router>
@@ -49,6 +61,10 @@ function App() {
           <Route
             path="/assignments"
             element={<ProtectedRoute component={AssignmentsPage} />}
+          />
+          <Route
+            path="/voice-adult"
+            element={<ProtectedRoute component={VoiceAdultPage} />}
           />
         </Routes>
       </div>

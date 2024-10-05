@@ -14,7 +14,8 @@
       "no-underscore-dangle": "off",
       "consistent-return": "off",
       "no-unused-vars": "warn",
-      "no-trailing-spaces": "warn"
+      "no-trailing-spaces": "warn",
+      "linebreak-style": "off"
     },
 
     "settings": {
