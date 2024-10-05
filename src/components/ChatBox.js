@@ -1,58 +1,138 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import axios from 'axios';
 import SendIcon from '@mui/icons-material/Send';
 import { IconButton } from '@mui/material';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import '../styles/ChatBox.css';
-import { BACKEND_API } from '../config';
+import { useAuth0 } from '@auth0/auth0-react';
+import fetchAccessToken from './Auth0Authen';
+import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import avatarKris from '../styles/image/avatar_account.jpg'; // Adjust the path
 import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
 
 function ChatBox() {
+  const test = 'http://localhost:3001';
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [chances, setChances] = useState(15); // Initialize with 15 chances
+  const [submission, setSubmission] = useState();
+  const [submissionId, setSubmissionId] = useState();
+  const [isLoading, setIsLoading] = useState(true); // New loading state
+  const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
+  const assignmentId = '66ed1a1aa739d9ae9c61d21c';
+
+  // Reference for the chat message container
+  const messagesEndRef = useRef(null);
+
+  // Function to fetch submission with chat history
+  const getSubmission = useCallback(async (tok) => {
+    try {
+      const res = await axios.get(
+        `${test}/submission?assignmentId=${assignmentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${tok}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      if (res.data.ok) {
+        console.log('submission:', res.data.submission);
+        return res.data.submission;
+      }
+    } catch (error) {
+      console.error('Error fetching submission:', error);
+    }
+  }, []);
+
+  // Scroll to the bottom of the message container
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Fetch the token and submission details including chat history
+  const fetchTokenAndSubmission = useCallback(async () => {
+    try {
+      const token = await fetchAccessToken({
+        getAccessTokenSilently,
+        getAccessTokenWithPopup,
+        AUTH0_API_IDENTIFIER,
+        AUTH0_SCOPE,
+      });
+
+      if (token) {
+        const loadedSubmission = await getSubmission(token);
+        if (loadedSubmission) {
+          setSubmission(loadedSubmission);
+          setChances(loadedSubmission.numOfQuestions);
+          setSubmissionId(loadedSubmission._id);
+
+          // Load chat history from submissionModel
+          if (
+            loadedSubmission.chatHistory &&
+            loadedSubmission.chatHistory.length > 0
+          ) {
+            const loadedMessages = loadedSubmission.chatHistory.map(
+              (chat, index) => ({
+                text: chat.content,
+                sender: chat.role === 'user' ? 'user' : 'bot',
+                id: index, // Generate a key using the index
+              }),
+            );
+            setMessages(loadedMessages);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching token or submission:', error);
+    } finally {
+      setIsLoading(false); // End loading state when data is fetched
+    }
+  }, [getAccessTokenSilently, getAccessTokenWithPopup, getSubmission]);
+
+  // Load the chat history when the page loads
+  useEffect(() => {
+    fetchTokenAndSubmission();
+  }, [fetchTokenAndSubmission]);
+
+  // Scroll to the bottom whenever the messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const sendMessage = () => {
     if (!input || chances <= 0) return; // Prevent sending if input is empty or no chances left
-    // Reduce the chances by 1
     setChances(chances - 1);
 
     const newMessage = { text: input, sender: 'user' };
     setMessages([...messages, newMessage]);
 
-    // eslint-disable-next-line
-    console.log(
-      `${BACKEND_API}/ai/demo/ask`,
-      JSON.stringify({
-        agent: '66c5965099528d233698d739',
-        question: input,
-      }),
-    );
-    fetch(`${BACKEND_API}/ai/demo/ask`, {
-      method: 'POST', // Specify the request method
-      mode: 'cors', // Add the CORS mode
+    fetch(`${test}/ai/demo/ask`, {
+      method: 'POST',
+      mode: 'cors',
       headers: {
-        'Content-Type': 'application/json', // Set the content type
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        agent: '66c5965099528d233698d739',
+        submission: submissionId, // Use the fetched submission ID
         question: input,
-      }), // Add the data
+      }),
     })
-      .then((response) => response.json()) // Parse the JSON from the response
+      .then((response) => response.json())
       .then((data) => {
-        // eslint-disable-next-line
-        console.log(data);
         const botMessage = { text: data.response, sender: 'bot' };
         setMessages([...messages, newMessage, botMessage]);
       })
       .catch((error) => {
-        // eslint-disable-next-line
-        console.error('Error:', error); // Handle errors
+        console.error('Error:', error);
       });
 
     setInput('');
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>; // Display loading state
+  }
 
   return (
     <div className="chatbox-container">
@@ -75,6 +155,8 @@ function ChatBox() {
             <p>{msg.text}</p>
           </div>
         ))}
+        {/* Dummy div to scroll to */}
+        <div ref={messagesEndRef} />
       </div>
       <div className="chatbox-input-container">
         <KeyboardVoiceIcon sx={{ color: 'var(--darker)' }} />
