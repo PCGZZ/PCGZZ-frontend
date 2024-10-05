@@ -1,4 +1,10 @@
 /* Assignments.css */
+.main-content {
+  margin-top: 102.9px;
+  padding: 40px;
+  background-color: var(--white);
+}
+
 .sub-heading {
   font-size: 24px;
   font-weight: 600;
@@ -25,10 +31,9 @@
 /* Status Styles */
 .status {
   padding: 5px 10px;
-  border-radius: 10px;
+  border-radius: 12px;
   font-weight: bold;
-  font-size: 13px;
-  font-family: 'Open Sans';
+  font-size: 12px;
 }
 
 .status.not-started {
@@ -39,10 +44,4 @@
 .status.completed {
   background-color: var(--main);
   color: var(--white);
-}
-
-.status.in-progress {
-  background-color: #1d82ede8;
-  color: var(--white);
-  font-weight: bolder;
 }

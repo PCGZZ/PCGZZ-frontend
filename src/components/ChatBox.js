@@ -3,6 +3,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { IconButton } from '@mui/material';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import '../styles/ChatBox.css';
+import { BACKEND_API } from '../config';
 import avatarKris from '../styles/image/avatar_account.jpg'; // Adjust the path
 import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
 import AISendMessage from '../api/AI.api';
@@ -19,11 +20,37 @@ function ChatBox() {
 
     const newMessage = { text: input, sender: 'user' };
     setMessages([...messages, newMessage]);
-    AISendMessage(input, (data) => {
-      console.log(data);
-      const botMessage = { text: data.response, sender: 'bot' };
-      setMessages([...messages, newMessage, botMessage]);
-    });
+
+    // eslint-disable-next-line
+    console.log(
+      `${BACKEND_API}/ai/demo/ask`,
+      JSON.stringify({
+        agent: '66c5965099528d233698d739',
+        question: input,
+      }),
+    );
+    fetch(`${BACKEND_API}/ai/demo/ask`, {
+      method: 'POST', // Specify the request method
+      mode: 'cors', // Add the CORS mode
+      headers: {
+        'Content-Type': 'application/json', // Set the content type
+      },
+      body: JSON.stringify({
+        agent: '66c5965099528d233698d739',
+        question: input,
+      }), // Add the data
+    })
+      .then((response) => response.json()) // Parse the JSON from the response
+      .then((data) => {
+        // eslint-disable-next-line
+        console.log(data);
+        const botMessage = { text: data.response, sender: 'bot' };
+        setMessages([...messages, newMessage, botMessage]);
+      })
+      .catch((error) => {
+        // eslint-disable-next-line
+        console.error('Error:', error); // Handle errors
+      });
 
     setInput('');
   };

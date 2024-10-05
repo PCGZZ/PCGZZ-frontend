@@ -1,9 +1,10 @@
 {
-    "extends": ["airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
-    "env": {
-      "browser": true,
-      "node": true
-    },
+  "extends": ["airbnb", "airbnb/hooks", "plugin:prettier/recommended"],
+  "env": {
+    "browser": true,
+    "node": true,
+    "jest": true
+  },
 
     "rules": {
       // Custom rules can be added here
@@ -18,17 +19,16 @@
       "linebreak-style": "off"
     },
 
-    "settings": {
-      "import/resolver": {
-        "node": {
-          "extensions": [".js", ".jsx"]
-        }
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx"]
       }
-    },
-
-    "parserOptions": {
-      "ecmaVersion": 2020,
-      "sourceType": "module"
     }
+  },
 
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
   }
+}
