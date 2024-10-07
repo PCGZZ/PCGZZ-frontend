@@ -106,6 +106,7 @@ function Assignments() {
 
   const handleSaveAssignment = () => {
     setShowNewAssignmentForm(false); // Hide form after saving
+    fetchTokenAndRoleAndAsmts();
   };
 
   const handleCancelAssignment = () => {
