@@ -56,7 +56,7 @@ function NewAssignmentPage({ onSave, onCancel }) {
 
       if (res.data.ok) {
         console.log('VA created successfully:', res.data.message);
-        return res.data.va.id;
+        return res.data.va._id;
       }
       throw new Error('Failed to create virtual adult');
     } catch (error) {
@@ -151,25 +151,33 @@ function NewAssignmentPage({ onSave, onCancel }) {
   return (
     <div className="main-content">
       <h2 className="sub-heading">New Assignment</h2>
-      <div className="action-buttons">
-        <button className="cancel-button" type="button" onClick={handleCancel}>
-          Cancel
-        </button>
-        <button className="save-button" type="button" onClick={handleSave}>
+      <div className="newasmt_action-buttons">
+        <button
+          className="newasmt_save-button"
+          type="button"
+          onClick={handleSave}
+        >
           Save
+        </button>
+        <button
+          className="newasmt_cancel-button"
+          type="button"
+          onClick={handleCancel}
+        >
+          Cancel
         </button>
       </div>
       {/* Tab Navigation */}
       <div className="tabs">
         <button
-          className={`tab-button ${activeTab === 'description' ? 'active' : ''}`}
+          className={`newasmt_tab-button ${activeTab === 'description' ? 'active' : ''}`}
           type="button"
           onClick={() => setActiveTab('description')}
         >
           Assignment Description
         </button>
         <button
-          className={`tab-button ${activeTab === 'virtual-adult' ? 'active' : ''}`}
+          className={`newasmt_tab-button ${activeTab === 'virtual-adult' ? 'active' : ''}`}
           type="button"
           onClick={() => setActiveTab('virtual-adult')}
         >

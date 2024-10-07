@@ -33,6 +33,8 @@ function Assignments() {
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showNewAssignmentForm, setShowNewAssignmentForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedAssignments, setSelectedAssignments] = useState([]);
 
   const retrieveAsmts = useCallback(async (tok) => {
     try {
@@ -66,6 +68,7 @@ function Assignments() {
 
   const fetchTokenAndRoleAndAsmts = useCallback(async () => {
     try {
+      setLoading(true);
       const token = await fetchAccessToken({
         getAccessTokenSilently,
         getAccessTokenWithPopup,
@@ -88,7 +91,7 @@ function Assignments() {
     } catch (error) {
       console.error('Error fetching token or assignments:', error);
     } finally {
-      setLoading(false); // Set loading to false when the process is complete
+      setLoading(false);
     }
   }, [getAccessTokenSilently, getAccessTokenWithPopup, retrieveAsmts, getRole]);
 
@@ -97,28 +100,135 @@ function Assignments() {
   }, [fetchTokenAndRoleAndAsmts]);
 
   if (loading) {
-    return <div>Loading...</div>; // Render a loading state while fetching data
+    return <div>Loading...</div>;
   }
 
   const handleAddAssignment = () => {
     setShowNewAssignmentForm(true);
   };
 
-  const handleSaveAssignment = () => {
-    setShowNewAssignmentForm(false); // Hide form after saving
-    fetchTokenAndRoleAndAsmts();
+  const handleSaveAssignment = async () => {
+    setShowNewAssignmentForm(false);
+
+    try {
+      await fetchTokenAndRoleAndAsmts();
+    } catch (error) {
+      console.error('Error fetching assignments after saving:', error);
+    }
   };
 
   const handleCancelAssignment = () => {
-    setShowNewAssignmentForm(false); // Hide form when cancelling
+    setShowNewAssignmentForm(false);
+  };
+
+  const handleEdit = () => {
+    setIsEditing((prev) => !prev); // Toggle edit mode
+    setSelectedAssignments([]); // Reset selected assignments when entering/exiting edit mode
+  };
+
+  const handleSelectAssignment = (id, virtualAdult) => {
+    setSelectedAssignments((prev) => {
+      const isSelected = prev.some(
+        (selected) =>
+          selected._id === id && selected.virtualAdult === virtualAdult,
+      );
+
+      if (isSelected) {
+        return prev.filter(
+          (selected) =>
+            !(selected._id === id && selected.virtualAdult === virtualAdult),
+        );
+      }
+      return [...prev, { _id: id, virtualAdult }];
+    });
+  };
+
+  const deleteVA = async (tok, asmtLi) => {
+    try {
+      await Promise.all(
+        asmtLi.map(async (asmt) => {
+          const vaId = asmt.virtualAdult;
+          const res = await axios.delete(`${BACKEND_API}/va?va_id=${vaId}`, {
+            headers: {
+              Authorization: `Bearer ${tok}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          if (!res.data.ok) {
+            throw new Error(`Failed to delete virtual adult with ID: ${vaId}`);
+          }
+        }),
+      );
+      console.log('All virtual adults deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting virtual adults:', error.message);
+      throw error;
+    }
+  };
+
+  const deleteAsmt = async (tok, asmtLi) => {
+    try {
+      await Promise.all(
+        asmtLi.map(async (asmt) => {
+          const id = asmt._id;
+          const res = await axios.delete(`${BACKEND_API}/assignment?id=${id}`, {
+            headers: {
+              Authorization: `Bearer ${tok}`,
+              'Content-Type': 'application/json',
+            },
+          });
+          if (!res.data.ok) {
+            throw new Error(`Failed to delete assignment with ID: ${id}`);
+          }
+        }),
+      );
+      console.log('All assignments deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting assignments:', error.message);
+      throw error;
+    }
+  };
+
+  const deleteAsmtAndVA = async (asmtLi) => {
+    try {
+      setLoading(true);
+      const token = await fetchAccessToken({
+        getAccessTokenSilently,
+        getAccessTokenWithPopup,
+        AUTH0_API_IDENTIFIER,
+        AUTH0_SCOPE,
+      });
+      console.log('Access Token');
+
+      // call api to get user role and fetch assignment lists
+      if (token) {
+        await deleteVA(token, asmtLi);
+        await deleteAsmt(token, asmtLi);
+      }
+    } catch (error) {
+      console.error('Error fetch token or delete assignments:', error);
+    }
+  };
+
+  const handleDeleteAssignments = async () => {
+    if (
+      window.confirm('Are you sure you want to delete selected assignment?')
+    ) {
+      try {
+        await deleteAsmtAndVA(selectedAssignments);
+        await fetchTokenAndRoleAndAsmts();
+        setSelectedAssignments([]);
+      } catch (error) {
+        console.error('Error deleting assignments:', error);
+      }
+    }
   };
 
   if (showNewAssignmentForm) {
-    // If "New Assignment" is clicked, render the form
     return (
       <NewAssignmentPage
         onSave={handleSaveAssignment}
-        onCancel={handleCancelAssignment} // Pass the cancel handler
+        onCancel={handleCancelAssignment}
       />
     );
   }
@@ -129,16 +239,28 @@ function Assignments() {
         Assignments
         {role === 'educator' || role === 'admin' ? (
           <div className="assignment-actions">
-            <button className="edit-button" type="button">
-              Edit
+            {isEditing && (
+              <button
+                className="delete-button"
+                type="button"
+                onClick={handleDeleteAssignments}
+                disabled={selectedAssignments.length === 0}
+              >
+                Delete Selected
+              </button>
+            )}
+            <button className="edit-button" type="button" onClick={handleEdit}>
+              {isEditing ? 'Cancel Edit' : 'Edit'}
             </button>
-            <button
-              className="new-assignment-button"
-              type="button"
-              onClick={handleAddAssignment}
-            >
-              New Assignment +
-            </button>
+            {!isEditing && (
+              <button
+                className="new-assignment-button"
+                type="button"
+                onClick={handleAddAssignment}
+              >
+                New Assignment +
+              </button>
+            )}
           </div>
         ) : null}
       </h2>
@@ -146,6 +268,7 @@ function Assignments() {
       <table className="assignments-table">
         <thead>
           <tr>
+            {isEditing && <th>Select</th>}
             <th>Title</th>
             <th>No of Students Questions</th>
             <th>Assignment Status</th>
@@ -157,6 +280,21 @@ function Assignments() {
           {assignments && assignments.length > 0 ? (
             assignments.map((asmt) => (
               <tr key={asmt._id}>
+                {isEditing && (
+                  <td>
+                    <input
+                      type="checkbox"
+                      checked={selectedAssignments.some(
+                        (selected) =>
+                          selected._id === asmt._id &&
+                          selected.virtualAdult === asmt.virtualAdult,
+                      )}
+                      onChange={() =>
+                        handleSelectAssignment(asmt._id, asmt.virtualAdult)
+                      }
+                    />
+                  </td>
+                )}
                 <td>{asmt.title}</td>
                 <td>{asmt.numOfQuestions}</td>
                 <td>
@@ -172,7 +310,7 @@ function Assignments() {
             ))
           ) : (
             <tr>
-              <td colSpan="5">No assignments.</td>
+              <td colSpan={isEditing ? 6 : 5}>No assignments.</td>
             </tr>
           )}
         </tbody>

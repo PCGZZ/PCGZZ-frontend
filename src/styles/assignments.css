@@ -31,6 +31,25 @@
   cursor: pointer;
 }
 
+.delete-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 20px;
+  width: fit-content;
+  height: fit-content;
+  background-color: rgba(255, 0, 0, 0.676);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: rgba(240, 1, 1, 0.884);
+}
+
 .new-assignment-button:hover,
 .edit-button:hover {
   background-color: #4bb7a8;
