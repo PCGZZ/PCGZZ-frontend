@@ -44,7 +44,18 @@ function Sidebar() {
             </div>
             <div className="sidebar-link-text-white">Virtual Adult</div>
           </Link>
+
+          <Link
+            to="/voice-adult"
+            className={`sidebar-link ${location.pathname === '/voice-adult' ? 'active' : 'inactive'}`}
+          >
+            <div className="sidebar-link-icon">
+              <Face2Icon sx={{ mr: 2 }} />
+            </div>
+            <div className="sidebar-link-text-white">Voice Test</div>
+          </Link>
         </div>
+        {/* Login & Logout */}
         <div className="logout-frame">
           <div className="logout-button">
             <button className="lo-button" onClick={handleLogout} type="button">

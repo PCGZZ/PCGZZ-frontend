@@ -6,6 +6,7 @@ import '../styles/ChatBox.css';
 import { BACKEND_API } from '../config';
 import avatarKris from '../styles/image/avatar_account.jpg'; // Adjust the path
 import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
+import AISendMessage from '../api/AI.api';
 
 function ChatBox() {
   const [messages, setMessages] = useState([]);

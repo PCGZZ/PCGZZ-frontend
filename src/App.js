@@ -10,6 +10,7 @@ import Login from './components/Login';
 import TeacherLogin from './components/TeacherLogin';
 import AssignmentList from './components/AssignmentList';
 import { AssignmentsProvider } from './context/AssignmentsContext'; // Import AssignmentsProvider
+import VoiceChatBox from './components/VoiceChatBox';
 import './styles/App.css';
 import NewAssignmentPage from './components/NewAssignmentPage'; // Import the NewAssignmentPage component
 
@@ -36,6 +37,17 @@ function AssignmentsPage() {
       <Sidebar />
       <div className="main-layout">
         <Assignments />
+      </div>
+    </>
+  );
+}
+
+function VoiceAdultPage() {
+  return (
+    <>
+      <Sidebar />
+      <div className="main-layout">
+        <VoiceChatBox />
       </div>
     </>
   );
@@ -72,6 +84,10 @@ function App() {
             <Route
               path="/assignment-detail/:assignmentId"
               element={<ProtectedRoute component={AssignmentList} />}
+            />
+            <Route
+              path="/voice-adult"
+              element={<ProtectedRoute component={VoiceAdultPage} />}
             />
           </Routes>
         </div>
