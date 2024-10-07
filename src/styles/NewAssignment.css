@@ -26,6 +26,7 @@
   display: flex;
   justify-content: flex-end;
   gap: 15px;
+  gap: 15px;
 }
 
 .newasmt_save-button,
@@ -33,7 +34,10 @@
   padding: 10px 20px;
   border-radius: 6px;
   font-size: 14px;
+  border-radius: 6px;
+  font-size: 14px;
   cursor: pointer;
+  border: none;
   border: none;
 }
 
