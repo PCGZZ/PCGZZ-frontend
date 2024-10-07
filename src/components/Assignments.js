@@ -31,7 +31,7 @@ function Assignments() {
   const [assignments, setAssignments] = useState(null);
   const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
   const [role, setRole] = useState(null);
-  const [loading, setLoading] = useState(true); // New loading state
+  const [loading, setLoading] = useState(true);
   const [showNewAssignmentForm, setShowNewAssignmentForm] = useState(false);
 
   const retrieveAsmts = useCallback(async (tok) => {

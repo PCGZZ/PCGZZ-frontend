@@ -1,8 +1,13 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import '../styles/NewAssignment.css';
 import '../styles/assignments.css';
+import { useAuth0 } from '@auth0/auth0-react';
+import fetchAccessToken from './Auth0Authen';
+import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 
 function NewAssignmentPage({ onSave, onCancel }) {
+  const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
   const [activeTab, setActiveTab] = useState('description');
   const [assignmentData, setAssignmentData] = useState({
     title: '',
@@ -20,7 +25,7 @@ function NewAssignmentPage({ onSave, onCancel }) {
     const { name, value } = e.target;
 
     if (name === 'numOfQuestions') {
-      if (value === '' || /^[0-9]+$/.test(value)) {
+      if (value === '' || /^[1-9]+$/.test(value)) {
         setAssignmentData({ ...assignmentData, [name]: value });
       }
     } else {
@@ -31,6 +36,83 @@ function NewAssignmentPage({ onSave, onCancel }) {
   const handleFileUpload = (e) => {
     const { name } = e.target;
     setAssignmentData({ ...assignmentData, [name]: e.target.files[0] });
+  };
+
+  const createVA = async (tok) => {
+    try {
+      const formData = new FormData();
+      formData.append('name', assignmentData.virtualAdultName);
+      formData.append('description', 'null');
+      formData.append('scenario', assignmentData.scenarioFile);
+      formData.append('photo', assignmentData.virtualAdultPhoto);
+      formData.append('AI_model', assignmentData.aiModel);
+
+      const res = await axios.post(`${BACKEND_API}/va`, formData, {
+        headers: {
+          Authorization: `Bearer ${tok}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (res.data.ok) {
+        console.log('VA created successfully:', res.data.message);
+        return res.data.va.id;
+      }
+      throw new Error('Failed to create virtual adult');
+    } catch (error) {
+      console.error('Error creating VA:', error);
+      throw error;
+    }
+  };
+
+  const createAsmt = async (tok, vaId) => {
+    try {
+      const res = await axios.post(
+        `${BACKEND_API}/assignment`,
+        {
+          title: assignmentData.title,
+          description: assignmentData.description,
+          numOfQuestions: assignmentData.numOfQuestions,
+          releaseDate: assignmentData.releaseDate,
+          dueDate: assignmentData.closeDate,
+          virtualAdult: vaId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${tok}`,
+          },
+        },
+      );
+
+      if (res.data.ok) {
+        console.log(res.data.message);
+        return;
+      }
+      throw new Error('Failed to create assignment');
+    } catch (error) {
+      console.error('Error creating assignment:', error);
+      throw error;
+    }
+  };
+
+  const createVAandAsmt = async () => {
+    try {
+      const token = await fetchAccessToken({
+        getAccessTokenSilently,
+        getAccessTokenWithPopup,
+        AUTH0_API_IDENTIFIER,
+        AUTH0_SCOPE,
+      });
+      console.log('Access Token');
+
+      // call api to creat VA and assignment
+      if (token) {
+        const VAid = await createVA(token);
+        await createAsmt(token, VAid);
+      }
+    } catch (error) {
+      console.error('Error fetching token or create assignments:', error);
+    }
   };
 
   const handleSave = () => {
@@ -50,6 +132,8 @@ function NewAssignmentPage({ onSave, onCancel }) {
       alert('Please fill all required fields.');
       return;
     }
+
+    createVAandAsmt();
 
     onSave(assignmentData);
   };
@@ -117,7 +201,7 @@ function NewAssignmentPage({ onSave, onCancel }) {
                   placeholder="Number of questions each student can ask"
                   value={assignmentData.numOfQuestions}
                   onChange={handleChange}
-                  min="0"
+                  min="1"
                 />
               </div>
             </div>
@@ -190,9 +274,12 @@ function NewAssignmentPage({ onSave, onCancel }) {
             <input
               type="file"
               name="virtualAdultPhoto"
-              accept="image/*"
+              accept="image/jpeg"
               onChange={handleFileUpload}
             />
+            <p style={{ color: '#828282' }}>
+              Only .jpeg or .jpg files are accepted
+            </p>
             {assignmentData.virtualAdultPhoto && (
               <div className="file-preview">
                 {assignmentData.virtualAdultPhoto.name} -{' '}
@@ -209,6 +296,9 @@ function NewAssignmentPage({ onSave, onCancel }) {
               accept=".pdf,.doc,.docx,.txt"
               onChange={handleFileUpload}
             />
+            <p style={{ color: '#828282' }}>
+              Only .txt or .pdf files are accepted
+            </p>
             {assignmentData.scenarioFile && (
               <div className="file-preview">
                 {assignmentData.scenarioFile.name} -{' '}
