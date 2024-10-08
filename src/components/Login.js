@@ -31,36 +31,6 @@ function Login() {
     );
   }, []);
 
-  // getUserRole function: gets the user role from the backend
-  const getUserRole = useCallback(async (tok) => {
-    const res = await axios.get(`${BACKEND_API}/users/get`, {
-      headers: {
-        Authorization: `Bearer ${tok}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (res.data.ok) {
-      return res.data.user.role;
-    }
-    throw new Error('Failed to fetch user role');
-  }, []);
-
-  // handleTokenOperations: logs the user and gets the role
-  const handleTokenOperations = useCallback(
-    async (tok) => {
-      try {
-        await loginDB(tok);
-        const role = await getUserRole(tok);
-        console.log('Role:', role);
-        return role;
-      } catch (error) {
-        console.error('Error in handling token:', error);
-      }
-    },
-    [getUserRole, loginDB],
-  );
-
   // fetchAndHandleToken: fetches the token from auth0 and handles it
   const fetchAndHandleToken = useCallback(async () => {
     try {
@@ -72,32 +42,25 @@ function Login() {
       });
 
       if (token) {
-        const role = await handleTokenOperations(token);
-        return role;
+        try {
+          await loginDB(token);
+          return;
+        } catch (error) {
+          console.error('Error in login DB:', error);
+        }
       }
       console.error('No token available after all attempts.');
       alert('Please turn off popup blocking settings and start again');
     } catch (error) {
       console.error('Error fetching and handling token:', error);
     }
-  }, [getAccessTokenSilently, getAccessTokenWithPopup, handleTokenOperations]);
+  }, [getAccessTokenSilently, getAccessTokenWithPopup, loginDB]);
 
   // useEffect: fetch token and navigate based on the role
   useEffect(() => {
     if (isAuthenticated) {
-      fetchAndHandleToken()
-        .then((role) => {
-          if (role === 'educator') {
-            navigate('/teacher-assignments');
-          } else if (role === 'student') {
-            navigate('/assignments');
-          } else {
-            console.error('Unknown role:', role);
-          }
-        })
-        .catch((error) => {
-          console.error('Error navigating based on role:', error);
-        });
+      fetchAndHandleToken();
+      navigate('/assignments');
     }
   }, [navigate, isAuthenticated, fetchAndHandleToken]);
 
