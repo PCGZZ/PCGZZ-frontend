@@ -151,33 +151,25 @@ function NewAssignmentPage({ onSave, onCancel }) {
   return (
     <div className="main-content">
       <h2 className="sub-heading">New Assignment</h2>
-      <div className="newasmt_action-buttons">
-        <button
-          className="newasmt_save-button"
-          type="button"
-          onClick={handleSave}
-        >
+      <div className="action-buttons">
+        <button className="save-button" type="button" onClick={handleSave}>
           Save
         </button>
-        <button
-          className="newasmt_cancel-button"
-          type="button"
-          onClick={handleCancel}
-        >
+        <button className="cancel-button" type="button" onClick={handleCancel}>
           Cancel
         </button>
       </div>
       {/* Tab Navigation */}
       <div className="tabs">
         <button
-          className={`newasmt_tab-button ${activeTab === 'description' ? 'active' : ''}`}
+          className={`tab-button ${activeTab === 'description' ? 'active' : ''}`}
           type="button"
           onClick={() => setActiveTab('description')}
         >
           Assignment Description
         </button>
         <button
-          className={`newasmt_tab-button ${activeTab === 'virtual-adult' ? 'active' : ''}`}
+          className={`tab-button ${activeTab === 'virtual-adult' ? 'active' : ''}`}
           type="button"
           onClick={() => setActiveTab('virtual-adult')}
         >

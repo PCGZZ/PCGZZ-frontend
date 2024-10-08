@@ -5,7 +5,7 @@
   margin-bottom: 20px;
 }
 
-.newasmt_tab-button {
+.tab-button {
   padding: 10px 20px;
   background-color: #F2F2F2;
   border-radius: 8px;
@@ -14,7 +14,7 @@
   cursor: pointer;
 }
 
-.newasmt_tab-button.active {
+.tab-button.active {
   background-color: #FFFFFF;
   border: 1px solid var(--main);
   color: var(--main);
@@ -22,15 +22,15 @@
 
 
 /* Action Buttons - aligned on the right */
-.newasmt_action-buttons {
+.action-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 15px;
   gap: 15px;
 }
 
-.newasmt_save-button,
-.newasmt_cancel-button {
+.save-button,
+.cancel-button {
   padding: 10px 20px;
   border-radius: 6px;
   font-size: 14px;
@@ -41,21 +41,21 @@
   border: none;
 }
 
-.newasmt_cancel-button {
+.cancel-button {
   background-color: #60D1C4;
   color: white;
 }
 
-.newasmt_save-button {
+.save-button {
   background-color: #FF6B6B;
   color: white;
 }
 
-.newasmt_cancel-button:hover {
+.cancel-button:hover {
   background-color: #4bb7a8;
 }
 
-.newasmt_save-button:hover {
+.save-button:hover {
   background-color: #d55d5d;
 }
 
@@ -90,6 +90,16 @@
   margin-bottom: 10px;
 }
 
+.section-content {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--text);
+  line-height: 25px;
+  letter-spacing: 0.06em;
+}
+
+
 .form-section input[type="text"],
 .form-section input[type="date"],
 .form-section input[type="number"],
@@ -109,3 +119,4 @@
   height: 120px;
   flex-grow: 1;
 }
+

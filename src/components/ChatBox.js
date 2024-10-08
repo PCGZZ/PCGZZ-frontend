@@ -11,7 +11,6 @@ import avatarKris from '../styles/image/avatar_account.jpg'; // Adjust the path
 import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
 
 function ChatBox() {
-  const test = 'http://localhost:3001';
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [chances, setChances] = useState(15); // Initialize with 15 chances
@@ -28,7 +27,7 @@ function ChatBox() {
   const getSubmission = useCallback(async (tok) => {
     try {
       const res = await axios.get(
-        `${test}/submission?assignmentId=${assignmentId}`,
+        `${BACKEND_API}/submission?assignmentId=${assignmentId}`,
         {
           headers: {
             Authorization: `Bearer ${tok}`,
@@ -107,7 +106,7 @@ function ChatBox() {
     const newMessage = { text: input, sender: 'user' };
     setMessages([...messages, newMessage]);
 
-    fetch(`${test}/ai/ask`, {
+    fetch(`${BACKEND_API}/ai/ask`, {
       method: 'POST',
       mode: 'cors',
       headers: {
