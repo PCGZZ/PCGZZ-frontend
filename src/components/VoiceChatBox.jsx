@@ -1,8 +1,6 @@
-/* eslint-disable */
-import React, { useState, useCallback,useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 // import SendIcon from '@mui/icons-material/Send';
 import { IconButton } from '@mui/material';
-import Tooltip from '@mui/material/Tooltip';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import StopIcon from '@mui/icons-material/Stop';
 // import ClearIcon from '@mui/icons-material/Clear';
@@ -12,12 +10,13 @@ import { useAuth0 } from '@auth0/auth0-react';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
-import { AISendMessage } from '../api/AI.api';
-
-import VoiceChatMessage from './VoiceMessage';
 import { v4 } from 'uuid';
-// import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
+import axios from 'axios';
+import { AISendMessage } from '../api/AI.api';
+import VoiceChatMessage from './VoiceMessage';
+import { BACKEND_API } from '../config';
 // import InputBar from './voiceModule/InputBar';
+import { getSubmissions } from '../api/submission.api';
 
 const waveSvg = (
   <svg
@@ -166,67 +165,50 @@ const waveSvg = (
   </svg>
 );
 
-const newMessage1 = {
-  id: '1',
-  text: 'Hello! How can I help you today?',
-  sender: 'bot',
-};
-const newMessage2 = {
-  id: '2',
-  text: 'Hello! How can I help you today?',
-  sender: 'user',
-};
-const newMessage3 = {
-  id: '3',
-  text: 'Hello! How can I help you today?',
-  sender: 'bot',
-};
-
 function VoiceChatBox() {
-  const [messages, setMessages] = useState([
-    newMessage1,
-    newMessage2,
-    newMessage3,
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [chances, setChances] = useState(15); // Initialize with 15 chances
-  const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
+  const { getAccessTokenSilently } = useAuth0();
   // voice text conpoments
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [voiceError, setVoiceError] = useState('');
-  const [textShow, setTextShow] = useState([false,true,false]);
+  const [submission, setSubmission] = useState();
+  const [submissionId, setSubmissionId] = useState();
+  const [textShow, setTextShow] = useState([false, true, false]); // Showing transcript of voice message
+  const [isLoading, setIsLoading] = useState(true); // New loading state
+  const assignmentId = '67049da4b7ae40607de91239';
 
+  // // api call to send message
+  // const getToken = useCallback(async () => {
+  //   let token = '';
+  //   try {
+  //     token = await getAccessTokenSilently();
+  //   } catch (error) {
+  //     console.error('Error in getting token:', error);
+  //     try {
+  //       token = await getAccessTokenWithPopup();
+  //     } catch (popupError) {
+  //       console.error('Error in getting token via popup:', popupError);
+  //       if (popupError.message.includes('popup')) {
+  //         alert('Please turn off popup blocking settings and try again.');
+  //       } else {
+  //         alert(`Error: ${popupError.message}`);
+  //       }
+  //     }
+  //   }
+  //   return token;
+  // }, [getAccessTokenSilently, getAccessTokenWithPopup]);
 
-  // api call to send message
-  const getToken = useCallback(async () => {
-    let token = '';
-    try {
-      token = await getAccessTokenSilently();
-    } catch (error) {
-      console.error('Error in getting token:', error);
-      try {
-        token = await getAccessTokenWithPopup();
-      } catch (popupError) {
-        console.error('Error in getting token via popup:', popupError);
-        if (popupError.message.includes('popup')) {
-          alert('Please turn off popup blocking settings and try again.');
-        } else {
-          alert(`Error: ${popupError.message}`);
-        }
-      }
-    }
-    return token;
-  }, [getAccessTokenSilently, getAccessTokenWithPopup]);
-
-  const sendMessage = async () => {
-    const token = await getToken();
+  const sendMessage = useCallback(async () => {
+    const token = await getAccessTokenSilently();
     console.log(input);
     if (!input || chances <= 0) return; // Prevent sending if input is empty or no chances left
     console.log('Token:', token);
     // Reduce the chances by 1
     setChances(chances - 1);
-    const newMessage = { text: input, sender: 'user',id:v4()};
+    const newMessage = { text: input, sender: 'user', id: v4() };
     setMessages([...messages, newMessage]);
     AISendMessage(
       {
@@ -236,15 +218,53 @@ function VoiceChatBox() {
       },
       (data) => {
         console.log(data);
-        const botMessage = { text: data.response, sender: 'bot', id:v4() };
-        setTextShow([...textShow,false,false]);
+        const botMessage = { text: data.response, sender: 'bot', id: v4() };
+        setTextShow([...textShow, false, false]);
         setMessages([...messages, newMessage, botMessage]);
       },
       token,
     );
 
     setInput('');
-  };
+  }, [chances, getAccessTokenSilently, input, messages, textShow]);
+
+  // Load the chat history when the page loads
+  useEffect(() => {
+    const func = async () => {
+      try {
+        const token = await getAccessTokenSilently();
+        if (token) {
+          const loadedSubmission = await getSubmissions(token);
+          if (loadedSubmission) {
+            setSubmission(loadedSubmission);
+            setChances(loadedSubmission.numOfQuestions);
+            setSubmissionId(loadedSubmission._id);
+
+            // Load chat history from submissionModel
+            if (
+              loadedSubmission.chatHistory &&
+              loadedSubmission.chatHistory.length > 0
+            ) {
+              const loadedMessages = loadedSubmission.chatHistory.map(
+                (chat, index) => ({
+                  text: chat.content,
+                  sender: chat.role === 'user' ? 'user' : 'bot',
+                  id: index, // Generate a key using the index
+                }),
+              );
+              setMessages(loadedMessages);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching token or submission:', error);
+      } finally {
+        setIsLoading(false); // End loading state when data is fetched
+      }
+    };
+    // fetchTokenAndSubmission();
+    func();
+  }, [getAccessTokenSilently]);
 
   // speak text to voice
   const speakText = (textToSpeak) => {
@@ -292,6 +312,8 @@ function VoiceChatBox() {
 
   recognition.onerror = (event) => {
     setVoiceError(`Error occurred in recognition: ${event.error}`);
+    // eslint-disable-next-line no-alert
+    alert(voiceError);
   };
 
   const handleListening = () => {
@@ -339,10 +361,10 @@ function VoiceChatBox() {
       {/* WaveForm svg Pls   */}
       {waveSvg}
 
-        <IconButton className="input-button" onClick={sendMessage}>
-          <CheckCircleIcon style={{ color: '339CAB', fontSize: '30' }} />
-        </IconButton>
-  
+      <IconButton className="input-button" onClick={sendMessage}>
+        <CheckCircleIcon style={{ color: '339CAB', fontSize: '30' }} />
+      </IconButton>
+
       <p>{transcript}</p>
     </div>
   ) : (
@@ -363,9 +385,16 @@ function VoiceChatBox() {
           <strong> Dr Zhou</strong>
         </span>
       </div>
+      {isLoading && <div>Loading...</div>}
       <div className="vcb-messages">
-        {messages.map((msg,i) =>
-          VoiceChatMessage(msg, () => speakText(msg.text),textShow,setTextShow,i),
+        {messages.map((msg, i) =>
+          VoiceChatMessage(
+            msg,
+            () => speakText(msg.text),
+            textShow,
+            setTextShow,
+            i,
+          ),
         )}
       </div>
 

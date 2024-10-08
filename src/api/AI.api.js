@@ -25,20 +25,4 @@ const AISendMessage = (body, op, token) => {
     });
 };
 
-const getSubmissions = (op, token) => {
-  fetch(`${BACKEND_API}/submission`, {
-    method: 'GET',
-    mode: 'cors',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((response) => response.json())
-    .then(op)
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-};
-
-export { AISendMessage, getSubmissions };
+export { AISendMessage };
