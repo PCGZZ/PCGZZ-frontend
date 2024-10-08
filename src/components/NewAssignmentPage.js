@@ -25,7 +25,7 @@ function NewAssignmentPage({ onSave, onCancel }) {
     const { name, value } = e.target;
 
     if (name === 'numOfQuestions') {
-      if (value === '' || /^[1-9]+$/.test(value)) {
+      if ((value === '' || /^[0-9]+$/.test(value)) && value > 0) {
         setAssignmentData({ ...assignmentData, [name]: value });
       }
     } else {
@@ -271,9 +271,8 @@ function NewAssignmentPage({ onSave, onCancel }) {
               value={assignmentData.aiModel}
               onChange={handleChange}
             >
-              <option value="Chat GPT 4">Chat GPT 4</option>
-              <option value="Chat GPT 4 mini">Chat GPT 4 mini</option>
-              <option value="Chat GPT 3.5">Chat GPT 3.5</option>
+              <option value="Chat GPT 4o">Chat GPT 4o</option>
+              <option value="Chat GPT 4o mini">Chat GPT 4o mini</option>
             </select>
           </div>
 

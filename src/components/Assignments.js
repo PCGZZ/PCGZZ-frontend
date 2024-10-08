@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import fetchAccessToken from './Auth0Authen';
 import NewAssignmentPage from './NewAssignmentPage';
@@ -35,6 +36,7 @@ function Assignments() {
   const [showNewAssignmentForm, setShowNewAssignmentForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedAssignments, setSelectedAssignments] = useState([]);
+  const navigate = useNavigate();
 
   const retrieveAsmts = useCallback(async (tok) => {
     try {
@@ -96,7 +98,11 @@ function Assignments() {
   }, [getAccessTokenSilently, getAccessTokenWithPopup, retrieveAsmts, getRole]);
 
   useEffect(() => {
-    fetchTokenAndRoleAndAsmts();
+    const func = async () => {
+      await fetchTokenAndRoleAndAsmts();
+    };
+
+    func();
   }, [fetchTokenAndRoleAndAsmts]);
 
   if (loading) {
@@ -148,7 +154,7 @@ function Assignments() {
       await Promise.all(
         asmtLi.map(async (asmt) => {
           const vaId = asmt.virtualAdult;
-          const res = await axios.delete(`${BACKEND_API}/va?va_id=${vaId}`, {
+          const res = await axios.delete(`${BACKEND_API}/va?id=${vaId}`, {
             headers: {
               Authorization: `Bearer ${tok}`,
               'Content-Type': 'application/json',
@@ -295,7 +301,15 @@ function Assignments() {
                     />
                   </td>
                 )}
-                <td>{asmt.title}</td>
+                <td>
+                  <button
+                    className="asmt-button"
+                    type="button"
+                    onClick={() => navigate(`/assignment-detail/${asmt._id}`)}
+                  >
+                    {asmt.title}
+                  </button>
+                </td>
                 <td>{asmt.numOfQuestions}</td>
                 <td>
                   <span

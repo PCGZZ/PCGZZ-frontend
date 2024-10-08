@@ -107,7 +107,7 @@ function ChatBox() {
     const newMessage = { text: input, sender: 'user' };
     setMessages([...messages, newMessage]);
 
-    fetch(`${test}/ai/demo/ask`, {
+    fetch(`${test}/ai/ask`, {
       method: 'POST',
       mode: 'cors',
       headers: {
