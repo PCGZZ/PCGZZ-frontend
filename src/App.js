@@ -8,11 +8,10 @@ import Assignments from './components/Assignments';
 import AssignmentTeacherPage from './components/AssignmentTeacherPage';
 import Login from './components/Login';
 import TeacherLogin from './components/TeacherLogin';
-import AssignmentList from './components/AssignmentList';
+import AssignmentDetail from './components/AssignmentDetail';
 import { AssignmentsProvider } from './context/AssignmentsContext'; // Import AssignmentsProvider
 import VoiceChatBox from './components/VoiceChatBox';
 import './styles/App.css';
-import NewAssignmentPage from './components/NewAssignmentPage'; // Import the NewAssignmentPage component
 
 function ProtectedRoute({ component, ...args }) {
   const Component = withAuthenticationRequired(component, args);
@@ -78,12 +77,8 @@ function App() {
             />
             {/* Add the route for NewAssignmentPage */}
             <Route
-              path="/new-assignment"
-              element={<ProtectedRoute component={NewAssignmentPage} />}
-            />
-            <Route
-              path="/assignment-detail/:assignmentId"
-              element={<ProtectedRoute component={AssignmentList} />}
+              path="/assignment-detail/:id"
+              element={<ProtectedRoute component={AssignmentDetail} />}
             />
             <Route
               path="/voice-adult"
