@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 // import SendIcon from '@mui/icons-material/Send';
 import { IconButton } from '@mui/material';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
@@ -11,10 +12,9 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 import { v4 } from 'uuid';
-import axios from 'axios';
+import { enqueueSnackbar } from 'notistack';
 import { AISendMessage } from '../api/AI.api';
 import VoiceChatMessage from './VoiceMessage';
-import { BACKEND_API } from '../config';
 // import InputBar from './voiceModule/InputBar';
 import { getSubmissions } from '../api/submission.api';
 
@@ -174,38 +174,16 @@ function VoiceChatBox() {
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [voiceError, setVoiceError] = useState('');
-  const [submission, setSubmission] = useState();
-  const [submissionId, setSubmissionId] = useState();
+  // const [submission, setSubmission] = useState();
+  // const [submissionId, setSubmissionId] = useState();
   const [textShow, setTextShow] = useState([false, true, false]); // Showing transcript of voice message
   const [isLoading, setIsLoading] = useState(true); // New loading state
-  const assignmentId = '67049da4b7ae40607de91239';
-
-  // // api call to send message
-  // const getToken = useCallback(async () => {
-  //   let token = '';
-  //   try {
-  //     token = await getAccessTokenSilently();
-  //   } catch (error) {
-  //     console.error('Error in getting token:', error);
-  //     try {
-  //       token = await getAccessTokenWithPopup();
-  //     } catch (popupError) {
-  //       console.error('Error in getting token via popup:', popupError);
-  //       if (popupError.message.includes('popup')) {
-  //         alert('Please turn off popup blocking settings and try again.');
-  //       } else {
-  //         alert(`Error: ${popupError.message}`);
-  //       }
-  //     }
-  //   }
-  //   return token;
-  // }, [getAccessTokenSilently, getAccessTokenWithPopup]);
-
+  const { assignmentId } = useParams();
   const sendMessage = useCallback(async () => {
     const token = await getAccessTokenSilently();
-    console.log(input);
+    // console.log(input);
     if (!input || chances <= 0) return; // Prevent sending if input is empty or no chances left
-    console.log('Token:', token);
+    // console.log('Token:', token);
     // Reduce the chances by 1
     setChances(chances - 1);
     const newMessage = { text: input, sender: 'user', id: v4() };
@@ -217,7 +195,7 @@ function VoiceChatBox() {
         submission: '66ed1a2aa739d9ae9c61d21f', // demo submission id
       },
       (data) => {
-        console.log(data);
+        // console.log(data);
         const botMessage = { text: data.response, sender: 'bot', id: v4() };
         setTextShow([...textShow, false, false]);
         setMessages([...messages, newMessage, botMessage]);
@@ -234,11 +212,13 @@ function VoiceChatBox() {
       try {
         const token = await getAccessTokenSilently();
         if (token) {
-          const loadedSubmission = await getSubmissions(token);
+          const loadedSubmission = await getSubmissions(token, {
+            assignmentId,
+          });
           if (loadedSubmission) {
-            setSubmission(loadedSubmission);
+            // setSubmission(loadedSubmission);
             setChances(loadedSubmission.numOfQuestions);
-            setSubmissionId(loadedSubmission._id);
+            // setSubmissionId(loadedSubmission._id);
 
             // Load chat history from submissionModel
             if (
@@ -257,14 +237,17 @@ function VoiceChatBox() {
           }
         }
       } catch (error) {
-        console.error('Error fetching token or submission:', error);
+        enqueueSnackbar(`Error fetching token or submission:${error}`, {
+          variant: 'error',
+          autoHideDuration: 5000,
+        });
       } finally {
         setIsLoading(false); // End loading state when data is fetched
       }
     };
     // fetchTokenAndSubmission();
     func();
-  }, [getAccessTokenSilently]);
+  }, [getAccessTokenSilently, assignmentId]);
 
   // speak text to voice
   const speakText = (textToSpeak) => {
@@ -278,7 +261,13 @@ function VoiceChatBox() {
       speech.voice = voice;
       window.speechSynthesis.speak(speech); // Speak the text
     } else {
-      alert('Sorry, your browser does not support speech synthesis.');
+      enqueueSnackbar(
+        'Sorry, your browser does not support speech synthesis.',
+        {
+          variant: 'error',
+          autoHideDuration: 5000,
+        },
+      );
     }
   };
 
@@ -377,7 +366,16 @@ function VoiceChatBox() {
 
   return (
     <div className="vcb-container">
-      <div className="vcb-header">
+      <div
+        style={{
+          textAlign: 'center',
+          fontFamily: 'var(--main)', // Assuming CSS variables are being used in the project
+          fontSize: 'var(--message)', // Same for this
+          fontWeight: 600,
+          color: 'var(--text)', // Using CSS variable for color
+          padding: '10px 0',
+        }}
+      >
         <span>
           VOICE:You have <strong>{chances}</strong>{' '}
           {chances === 1 ? 'chance ' : 'chances '}

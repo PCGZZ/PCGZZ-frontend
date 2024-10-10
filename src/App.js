@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { User, withAuthenticationRequired } from '@auth0/auth0-react';
+import { withAuthenticationRequired } from '@auth0/auth0-react';
 import { SnackbarProvider } from 'notistack';
 import Sidebar from './components/Sidebar';
 import SearchBar from './components/SearchBar';
@@ -97,7 +97,7 @@ function App() {
                 element={<ProtectedRoute component={AssignmentDetail} />}
               />
               <Route
-                path="/voice-adult"
+                path="/voice-adult/:submissionId"
                 element={<ProtectedRoute component={VoiceAdultPage} />}
               />
               <Route
