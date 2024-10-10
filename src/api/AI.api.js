@@ -8,8 +8,8 @@ const AISendMessage = (body, op, token) => {
    * @param {function} op - The callback function to execute after receiving
    * response will be formatted as json object
    */
-  console.log(`${BACKEND_API}/ai/demo/ask`, JSON.stringify(body));
-  fetch(`${BACKEND_API}/ai/demo/ask`, {
+  console.log(`${BACKEND_API}/ai/ask`, JSON.stringify(body));
+  fetch(`${BACKEND_API}/ai/ask`, {
     method: 'POST', // Specify the request method
     mode: 'cors', // Add the CORS mode
     headers: {
