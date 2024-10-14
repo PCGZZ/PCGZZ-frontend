@@ -1,16 +1,21 @@
 import axios from 'axios';
 import { Buffer } from 'buffer';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Sidebar from './Sidebar';
 import SearchBar from './SearchBar';
 import '../styles/NewAssignment.css';
 import '../styles/assignments.css';
 import fetchAccessToken from './Auth0Authen';
 import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
+import { getUserRole } from '../api/user.api';
+import FileDownload from '../api/FileDownload';
 
 function AssignmentDetail() {
+  const [role, setRole] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const { id: asmtId } = useParams();
   const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
   const [activeTab, setActiveTab] = useState('description');
@@ -29,6 +34,96 @@ function AssignmentDetail() {
     photo: null,
     aiModel: '',
   });
+
+  const handleEdit = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const updateVA = useCallback(
+    async (tok) => {
+      try {
+        const res = await axios.patch(
+          `${BACKEND_API}/va?id=${vaData.id}`,
+          {
+            name: vaData.name,
+            description: vaData.description,
+            scenario: vaData.scenario,
+            photo: vaData.photo,
+            AI_model: vaData.aiModel,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${tok}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        if (res.data.ok) {
+          console.log(res.data.message);
+          setIsEditing(false);
+        }
+      } catch (error) {
+        console.error('Error updating virtual adult:', error);
+      }
+    },
+    [vaData],
+  );
+
+  const updateAsmt = useCallback(
+    async (tok) => {
+      try {
+        const res = await axios.patch(
+          `${BACKEND_API}/assignment?id=${asmtId}`,
+          assignmentData,
+          {
+            headers: {
+              Authorization: `Bearer ${tok}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+
+        if (res.data.ok) {
+          console.log(res.data.message);
+          setIsEditing(false);
+        }
+      } catch (error) {
+        console.error('Error updating assignment:', error);
+      }
+    },
+    [asmtId, assignmentData],
+  );
+
+  const handleSaveAsmt = async () => {
+    const requiredFields = [
+      'title',
+      'description',
+      'numOfQuestions',
+      'releaseDate',
+      'closeDate',
+    ];
+    const emptyFields = requiredFields.filter(
+      (field) => !assignmentData[field],
+    );
+
+    if (emptyFields.length > 0) {
+      alert('Please fill all fields.');
+      return;
+    }
+
+    const token = await fetchAccessToken({
+      getAccessTokenSilently,
+      getAccessTokenWithPopup,
+      AUTH0_API_IDENTIFIER,
+      AUTH0_SCOPE,
+    });
+
+    if (token) {
+      // await updateVA(token);
+      await updateAsmt(token);
+    }
+  };
 
   const retrieveAsmt = useCallback(
     async (tok) => {
@@ -86,10 +181,19 @@ function AssignmentDetail() {
         setVaData((prevData) => ({
           ...prevData,
           name: res.data.va.name,
-          scenario: res.data.va.scenario,
+          scenario: {
+            data: Buffer.from(res.data.va.scenario.data.data).toString(
+              'base64',
+            ),
+            contentType: res.data.va.scenario.contentType,
+            filename: res.data.va.scenario.filename,
+          },
           photo: base64Photo,
           aiModel: res.data.va.AI_model,
         }));
+        console.log(res.data.va.scenario.filename);
+        console.log(res.data.va.scenario.data.data);
+        console.log(res.data.va.scenario.contentType);
       }
     } catch (error) {
       console.error('Error fetching virtual adult:', error);
@@ -107,6 +211,10 @@ function AssignmentDetail() {
       });
 
       if (token) {
+        const userRole = await getUserRole(token);
+        if (userRole) {
+          setRole(userRole);
+        }
         const vaId = await retrieveAsmt(token);
         if (vaId) {
           await retrieveVA(vaId, token);
@@ -138,7 +246,37 @@ function AssignmentDetail() {
             <div>Loading...</div>
           ) : (
             <>
-              <h2 className="sub-heading">{assignmentData.title}</h2>
+              <h2 className="sub-heading">
+                {assignmentData.title}
+                <div className="assignment-actions">
+                  {!isEditing && (
+                    <Link to="/assignments">
+                      <ArrowBackIcon sx={{ color: 'var(--darker)' }} />
+                    </Link>
+                  )}
+
+                  {role === 'educator' || role === 'admin' ? (
+                    <>
+                      {isEditing && (
+                        <button
+                          className="save-button"
+                          type="button"
+                          onClick={handleSaveAsmt}
+                        >
+                          Save
+                        </button>
+                      )}
+                      <button
+                        className="edit-button"
+                        type="button"
+                        onClick={handleEdit}
+                      >
+                        {isEditing ? 'Cancel Edit' : 'Edit'}
+                      </button>
+                    </>
+                  ) : null}
+                </div>
+              </h2>
               <div className="tabs">
                 <button
                   className={`tab-button ${activeTab === 'description' ? 'active' : ''}`}
@@ -167,37 +305,105 @@ function AssignmentDetail() {
                 <div className="form-container">
                   <div className="form-section">
                     <h3 className="section-title">Title of Assignment</h3>
-                    <p className="section-content">{assignmentData.title}</p>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={assignmentData.title}
+                        onChange={(e) =>
+                          setAssignmentData({
+                            ...assignmentData,
+                            title: e.target.value,
+                          })
+                        }
+                      />
+                    ) : (
+                      <p className="section-content">{assignmentData.title}</p>
+                    )}
                   </div>
 
                   <div className="form-section">
                     <h3 className="section-title">
                       Number of Students Questions
                     </h3>
-                    <p className="section-content">
-                      {assignmentData.numOfQuestions}
-                    </p>
+                    {isEditing ? (
+                      <input
+                        type="number"
+                        value={assignmentData.numOfQuestions}
+                        onChange={(e) =>
+                          setAssignmentData({
+                            ...assignmentData,
+                            numOfQuestions: e.target.value,
+                          })
+                        }
+                        min="1"
+                      />
+                    ) : (
+                      <p className="section-content">
+                        {assignmentData.numOfQuestions}
+                      </p>
+                    )}
                   </div>
 
                   <div className="form-section">
                     <h3 className="section-title">Assignment Description</h3>
-                    <p className="section-content">
-                      {assignmentData.description}
-                    </p>
+                    {isEditing ? (
+                      <textarea
+                        name="description"
+                        value={assignmentData.description}
+                        onChange={(e) =>
+                          setAssignmentData({
+                            ...assignmentData,
+                            description: e.target.value,
+                          })
+                        }
+                      />
+                    ) : (
+                      <p className="section-content">
+                        {assignmentData.description}
+                      </p>
+                    )}
                   </div>
 
                   <div className="form-section">
                     <h3 className="section-title">Release Date</h3>
-                    <p className="section-content">
-                      {assignmentData.releaseDate}
-                    </p>
+                    {isEditing ? (
+                      <input
+                        type="date"
+                        name="releaseDate"
+                        value={assignmentData.releaseDate}
+                        onChange={(e) =>
+                          setAssignmentData({
+                            ...assignmentData,
+                            releaseDate: e.target.value,
+                          })
+                        }
+                      />
+                    ) : (
+                      <p className="section-content">
+                        {assignmentData.releaseDate}
+                      </p>
+                    )}
                   </div>
 
                   <div className="form-section">
                     <h3 className="section-title">Close Date</h3>
-                    <p className="section-content">
-                      {assignmentData.closeDate}
-                    </p>
+                    {isEditing ? (
+                      <input
+                        type="date"
+                        name="closeDate"
+                        value={assignmentData.closeDate}
+                        onChange={(e) =>
+                          setAssignmentData({
+                            ...assignmentData,
+                            closeDate: e.target.value,
+                          })
+                        }
+                      />
+                    ) : (
+                      <p className="section-content">
+                        {assignmentData.closeDate}
+                      </p>
+                    )}
                   </div>
                 </div>
               )}
@@ -217,11 +423,20 @@ function AssignmentDetail() {
                   <div className="form-section">
                     <h3 className="section-title">Photo of Virtual Adult</h3>
                     {vaData.photo ? (
-                      <img
-                        className="virtual-adult-photo"
-                        src={vaData.photo}
-                        alt="Virtual Adult"
-                      />
+                      <>
+                        <img
+                          className="virtual-adult-photo"
+                          src={vaData.photo}
+                          alt="Virtual Adult"
+                        />
+                        <a
+                          href={vaData.photo}
+                          download="virtual_adult_photo.jpg"
+                          className="download-button"
+                        >
+                          Download Photo
+                        </a>
+                      </>
                     ) : (
                       <p>No uploaded photo</p>
                     )}
@@ -230,9 +445,46 @@ function AssignmentDetail() {
                   <div className="form-section">
                     <h3 className="section-title">Scenario</h3>
                     <p className="section-content">
-                      {vaData.scenario || 'No scenario uploaded'}
+                      {vaData.scenario ? (
+                        <FileDownload
+                          base64Data={vaData.scenario.data}
+                          fileType={vaData.scenario.contentType}
+                          fileName={vaData.scenario.filename}
+                        />
+                      ) : (
+                        <p>No scenario uploaded</p>
+                      )}
                     </p>
                   </div>
+                </div>
+              )}
+
+              {activeTab === 'students-transcripts' && (
+                <div className="form-section">
+                  <table className="transcripts-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Student ID</th>
+                        <th>Student Email</th>
+                        <th>Transcripts Summary</th>
+                        <th>Transcripts</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Amy</td>
+                        <td>101171098</td>
+                        <td>name@username.deakin.edu.au</td>
+                        <td>
+                          <Link to="/transcript-amy">Click to see</Link>
+                        </td>
+                        <td>
+                          <Link to="/transcript-amy">Click to see</Link>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               )}
             </>

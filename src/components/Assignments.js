@@ -6,6 +6,7 @@ import fetchAccessToken from './Auth0Authen';
 import NewAssignmentPage from './NewAssignmentPage';
 import '../styles/assignments.css';
 import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
+import { getUserRole } from '../api/user.api';
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -54,20 +55,6 @@ function Assignments() {
     }
   }, []);
 
-  const getRole = useCallback(async (tok) => {
-    const res = await axios.get(`${BACKEND_API}/users/get`, {
-      headers: {
-        Authorization: `Bearer ${tok}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (res.data.ok) {
-      return res.data.user.role;
-    }
-    throw new Error('Failed to fetch user role');
-  }, []);
-
   const fetchTokenAndRoleAndAsmts = useCallback(async () => {
     try {
       setLoading(true);
@@ -81,7 +68,7 @@ function Assignments() {
 
       // call api to get user role and fetch assignment lists
       if (token) {
-        const userRole = await getRole(token);
+        const userRole = await getUserRole(token);
         const asmtList = await retrieveAsmts(token);
         if (userRole) {
           setRole(userRole);
@@ -95,7 +82,7 @@ function Assignments() {
     } finally {
       setLoading(false);
     }
-  }, [getAccessTokenSilently, getAccessTokenWithPopup, retrieveAsmts, getRole]);
+  }, [getAccessTokenSilently, getAccessTokenWithPopup, retrieveAsmts]);
 
   useEffect(() => {
     const func = async () => {
