@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Buffer } from 'buffer';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -73,11 +74,20 @@ function AssignmentDetail() {
         },
       });
       if (res.data.ok) {
+        let base64Photo = null;
+
+        if (res.data.va.photo && res.data.va.photo.data.type === 'Buffer') {
+          const buffer = Buffer.from(res.data.va.photo.data.data).toString(
+            'base64',
+          );
+          base64Photo = `data:image/jpeg;base64,${buffer}`;
+        }
+
         setVaData((prevData) => ({
           ...prevData,
           name: res.data.va.name,
           scenario: res.data.va.scenario,
-          photo: res.data.va.photo,
+          photo: base64Photo,
           aiModel: res.data.va.AI_model,
         }));
       }
@@ -207,9 +217,13 @@ function AssignmentDetail() {
                   <div className="form-section">
                     <h3 className="section-title">Photo of Virtual Adult</h3>
                     {vaData.photo ? (
-                      <img src={vaData.photo} alt="Virtual Adult" />
+                      <img
+                        className="virtual-adult-photo"
+                        src={vaData.photo}
+                        alt="Virtual Adult"
+                      />
                     ) : (
-                      <p>No photo available</p>
+                      <p>No uploaded photo</p>
                     )}
                   </div>
 

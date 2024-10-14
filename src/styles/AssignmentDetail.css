@@ -14,7 +14,7 @@
   font-family: 'Open Sans', sans-serif;
   font-weight: 600;
   font-size: 24px;
-  color: #339CAB;
+  color: #339cab;
   margin-bottom: 20px;
 }
 
@@ -26,8 +26,8 @@
 }
 
 .assignment-section {
-  background: #FFFFFF;
-  border: 1px solid #EFF0F7;
+  background: #ffffff;
+  border: 1px solid #eff0f7;
   box-shadow: 0px 2px 6px rgba(19, 18, 66, 0.07);
   border-radius: 21px;
   padding: 20px;
@@ -48,10 +48,11 @@
   margin-top: 30px;
 }
 
-.release-date, .close-date {
+.release-date,
+.close-date {
   width: 48%;
-  background: #FFFFFF;
-  border: 1px solid #EFF0F7;
+  background: #ffffff;
+  border: 1px solid #eff0f7;
   box-shadow: 0px 2px 6px rgba(19, 18, 66, 0.07);
   border-radius: 21px;
   padding: 20px;
@@ -77,14 +78,14 @@
   font-weight: 800;
   font-size: 24px;
   line-height: 33px;
-  color: #1B6D87;
+  color: #1b6d87;
   opacity: 0.4;
 }
 
 .chatbox-icon {
   width: 30px;
   height: 30px;
-  border: 2px solid #339CAB;
+  border: 2px solid #339cab;
   border-radius: 50%;
   background: transparent;
 }
@@ -126,13 +127,20 @@
   border-collapse: collapse;
 }
 
-.transcripts-table th, .transcripts-table td {
+.transcripts-table th,
+.transcripts-table td {
   padding: 10px;
   border: 1px solid #ddd;
 }
 
 .virtual-adult-photo {
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  max-height: 200px;
+  max-width: 200px;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
 }
