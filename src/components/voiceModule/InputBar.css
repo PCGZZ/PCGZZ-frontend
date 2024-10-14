@@ -1,0 +1,69 @@
+.audioInputFrame {
+    border-radius: 30px;
+    background-color: rgba(143, 223, 228, 0.22);
+    box-shadow: 0 4px 4px rgba(30, 30, 30, 0.25);
+    align-self: center;
+    display: flex;
+    margin-top: 292px;
+    width: 339px;
+    max-width: 100%;
+    align-items: center;
+    gap: 14px;
+    overflow: hidden;
+    justify-content: flex-start;
+  }
+  
+  @media (max-width: 991px) {
+    .audioInputFrame {
+      margin-top: 40px;
+    }
+  }
+  
+  .audioControlsWrapper {
+    align-self: stretch;
+    display: flex;
+    min-width: 240px;
+    width: 339px;
+    align-items: center;
+    gap: 40px 64px;
+    overflow: hidden;
+    justify-content: space-between;
+    margin: auto 0;
+    padding: 10px 30px;
+  }
+  
+  @media (max-width: 991px) {
+    .audioControlsWrapper {
+      padding: 0 20px;
+    }
+  }
+  
+  .controlIcon {
+    aspect-ratio: 1;
+    object-fit: contain;
+    object-position: center;
+    width: 30px;
+    align-self: stretch;
+    margin: auto 0;
+  }
+  
+  .waveform {
+    align-self: stretch;
+    display: flex;
+    min-height: 32px;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-start;
+    margin: auto 0;
+    padding: 8px 0;
+  }
+  
+  .waveBar {
+    border-radius: 1px;
+    background-color: rgba(51, 156, 171, 0.66);
+    align-self: stretch;
+    display: flex;
+    width: 2px;
+    background: var(--Darker, #339cab);
+    margin: auto 0;
+  }
