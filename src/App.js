@@ -4,12 +4,12 @@ import { withAuthenticationRequired } from '@auth0/auth0-react';
 import { SnackbarProvider } from 'notistack';
 import Sidebar from './components/Sidebar';
 import SearchBar from './components/SearchBar';
-import ChatBox from './components/ChatBox';
-import Assignments from './components/Assignments';
 import Login from './components/Login';
 import TeacherLogin from './components/TeacherLogin';
 import AssignmentDetail from './components/AssignmentDetail';
 import VoiceChatBox from './components/VoiceChatBox';
+import VirtualAdultPage from './page/VirtualAdultPage';
+import AssignmentsPage from './page/AssignmentsPage';
 import './styles/App.css';
 import StudentList from './components/StudentsList';
 import { UserProvider } from './context/UserContext';
@@ -17,29 +17,6 @@ import { UserProvider } from './context/UserContext';
 function ProtectedRoute({ component, ...args }) {
   const Component = withAuthenticationRequired(component, args);
   return <Component />;
-}
-
-function VirtualAdultPage() {
-  return (
-    <>
-      <Sidebar />
-      <div className="main-layout">
-        <ChatBox />
-      </div>
-    </>
-  );
-}
-
-function AssignmentsPage() {
-  return (
-    <>
-      <SearchBar />
-      <Sidebar />
-      <div className="main-layout">
-        <Assignments />
-      </div>
-    </>
-  );
 }
 
 function VoiceAdultPage() {
@@ -73,7 +50,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route
-              path="/virtual-adult"
+              path="/virtual-adult/:assignmentId"
               element={<ProtectedRoute component={VirtualAdultPage} />}
             />
             <Route

@@ -12,6 +12,7 @@ import fetchAccessToken from './Auth0Authen';
 import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import { getUserRole } from '../api/user.api';
 import FileDownload from '../api/FileDownload';
+import StartChat from '../api/StartChat';
 
 function AssignmentDetail() {
   const [role, setRole] = useState(null);
@@ -178,22 +179,24 @@ function AssignmentDetail() {
           base64Photo = `data:image/jpeg;base64,${buffer}`;
         }
 
-        setVaData((prevData) => ({
-          ...prevData,
-          name: res.data.va.name,
-          scenario: {
+        let resScenario = null;
+        if (res.data.va.scenario?.data?.data) {
+          resScenario = {
             data: Buffer.from(res.data.va.scenario.data.data).toString(
               'base64',
             ),
             contentType: res.data.va.scenario.contentType,
             filename: res.data.va.scenario.filename,
-          },
+          };
+        }
+
+        setVaData((prevData) => ({
+          ...prevData,
+          name: res.data.va.name,
+          scenario: resScenario,
           photo: base64Photo,
           aiModel: res.data.va.AI_model,
         }));
-        console.log(res.data.va.scenario.filename);
-        console.log(res.data.va.scenario.data.data);
-        console.log(res.data.va.scenario.contentType);
       }
     } catch (error) {
       console.error('Error fetching virtual adult:', error);
@@ -302,109 +305,114 @@ function AssignmentDetail() {
               </div>
 
               {activeTab === 'description' && (
-                <div className="form-container">
-                  <div className="form-section">
-                    <h3 className="section-title">Title of Assignment</h3>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={assignmentData.title}
-                        onChange={(e) =>
-                          setAssignmentData({
-                            ...assignmentData,
-                            title: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      <p className="section-content">{assignmentData.title}</p>
-                    )}
-                  </div>
+                <div>
+                  <div className="form-container">
+                    <div className="form-section">
+                      <h3 className="section-title">Title of Assignment</h3>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={assignmentData.title}
+                          onChange={(e) =>
+                            setAssignmentData({
+                              ...assignmentData,
+                              title: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        <p className="section-content">
+                          {assignmentData.title}
+                        </p>
+                      )}
+                    </div>
 
-                  <div className="form-section">
-                    <h3 className="section-title">
-                      Number of Students Questions
-                    </h3>
-                    {isEditing ? (
-                      <input
-                        type="number"
-                        value={assignmentData.numOfQuestions}
-                        onChange={(e) =>
-                          setAssignmentData({
-                            ...assignmentData,
-                            numOfQuestions: e.target.value,
-                          })
-                        }
-                        min="1"
-                      />
-                    ) : (
-                      <p className="section-content">
-                        {assignmentData.numOfQuestions}
-                      </p>
-                    )}
-                  </div>
+                    <div className="form-section">
+                      <h3 className="section-title">
+                        Number of Students Questions
+                      </h3>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          value={assignmentData.numOfQuestions}
+                          onChange={(e) =>
+                            setAssignmentData({
+                              ...assignmentData,
+                              numOfQuestions: e.target.value,
+                            })
+                          }
+                          min="1"
+                        />
+                      ) : (
+                        <p className="section-content">
+                          {assignmentData.numOfQuestions}
+                        </p>
+                      )}
+                    </div>
 
-                  <div className="form-section">
-                    <h3 className="section-title">Assignment Description</h3>
-                    {isEditing ? (
-                      <textarea
-                        name="description"
-                        value={assignmentData.description}
-                        onChange={(e) =>
-                          setAssignmentData({
-                            ...assignmentData,
-                            description: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      <p className="section-content">
-                        {assignmentData.description}
-                      </p>
-                    )}
-                  </div>
+                    <div className="form-section">
+                      <h3 className="section-title">Assignment Description</h3>
+                      {isEditing ? (
+                        <textarea
+                          name="description"
+                          value={assignmentData.description}
+                          onChange={(e) =>
+                            setAssignmentData({
+                              ...assignmentData,
+                              description: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        <p className="section-content">
+                          {assignmentData.description}
+                        </p>
+                      )}
+                    </div>
 
-                  <div className="form-section">
-                    <h3 className="section-title">Release Date</h3>
-                    {isEditing ? (
-                      <input
-                        type="date"
-                        name="releaseDate"
-                        value={assignmentData.releaseDate}
-                        onChange={(e) =>
-                          setAssignmentData({
-                            ...assignmentData,
-                            releaseDate: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      <p className="section-content">
-                        {assignmentData.releaseDate}
-                      </p>
-                    )}
-                  </div>
+                    <div className="form-section">
+                      <h3 className="section-title">Release Date</h3>
+                      {isEditing ? (
+                        <input
+                          type="date"
+                          name="releaseDate"
+                          value={assignmentData.releaseDate}
+                          onChange={(e) =>
+                            setAssignmentData({
+                              ...assignmentData,
+                              releaseDate: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        <p className="section-content">
+                          {assignmentData.releaseDate}
+                        </p>
+                      )}
+                    </div>
 
-                  <div className="form-section">
-                    <h3 className="section-title">Close Date</h3>
-                    {isEditing ? (
-                      <input
-                        type="date"
-                        name="closeDate"
-                        value={assignmentData.closeDate}
-                        onChange={(e) =>
-                          setAssignmentData({
-                            ...assignmentData,
-                            closeDate: e.target.value,
-                          })
-                        }
-                      />
-                    ) : (
-                      <p className="section-content">
-                        {assignmentData.closeDate}
-                      </p>
-                    )}
+                    <div className="form-section">
+                      <h3 className="section-title">Close Date</h3>
+                      {isEditing ? (
+                        <input
+                          type="date"
+                          name="closeDate"
+                          value={assignmentData.closeDate}
+                          onChange={(e) =>
+                            setAssignmentData({
+                              ...assignmentData,
+                              closeDate: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        <p className="section-content">
+                          {assignmentData.closeDate}
+                        </p>
+                      )}
+                    </div>
                   </div>
+                  <StartChat assignmentId={asmtId} />
                 </div>
               )}
 
@@ -422,29 +430,31 @@ function AssignmentDetail() {
 
                   <div className="form-section">
                     <h3 className="section-title">Photo of Virtual Adult</h3>
-                    {vaData.photo ? (
-                      <>
-                        <img
-                          className="virtual-adult-photo"
-                          src={vaData.photo}
-                          alt="Virtual Adult"
-                        />
-                        <a
-                          href={vaData.photo}
-                          download="virtual_adult_photo.jpg"
-                          className="download-button"
-                        >
-                          Download Photo
-                        </a>
-                      </>
-                    ) : (
-                      <p>No uploaded photo</p>
-                    )}
+                    <div className="section-content">
+                      {vaData.photo ? (
+                        <>
+                          <img
+                            className="virtual-adult-photo"
+                            src={vaData.photo}
+                            alt="Virtual Adult"
+                          />
+                          <a
+                            href={vaData.photo}
+                            download="virtual_adult_photo.jpg"
+                            className="download-button"
+                          >
+                            Download Photo
+                          </a>
+                        </>
+                      ) : (
+                        <p>No photo uploaded</p>
+                      )}
+                    </div>
                   </div>
 
                   <div className="form-section">
                     <h3 className="section-title">Scenario</h3>
-                    <p className="section-content">
+                    <div className="section-content">
                       {vaData.scenario ? (
                         <FileDownload
                           base64Data={vaData.scenario.data}
@@ -454,7 +464,7 @@ function AssignmentDetail() {
                       ) : (
                         <p>No scenario uploaded</p>
                       )}
-                    </p>
+                    </div>
                   </div>
                 </div>
               )}

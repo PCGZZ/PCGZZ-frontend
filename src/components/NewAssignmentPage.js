@@ -123,13 +123,15 @@ function NewAssignmentPage({ onSave, onCancel }) {
       'releaseDate',
       'closeDate',
       'virtualAdultName',
+      'scenarioFile',
     ];
+
     const emptyFields = requiredFields.filter(
       (field) => !assignmentData[field],
     );
 
     if (emptyFields.length > 0) {
-      alert('Please fill all required fields.');
+      alert('Please fill all fields.');
       return;
     }
 
