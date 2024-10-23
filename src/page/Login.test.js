@@ -1,6 +1,5 @@
 import React from 'react';
-import '@testing-library/jest-dom';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, screen, fireEvent } from '@testing-library/react';
 import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +8,7 @@ import fetchAccessToken from '../api/Authen'; // Mock the token fetching module
 
 jest.mock('axios');
 jest.mock('@auth0/auth0-react');
-jest.mock('./Auth0Authen'); // Mock fetchAccessToken
+jest.mock('../api/Authen'); // Mock fetchAccessToken
 jest.mock('react-router-dom', () => ({
   useNavigate: jest.fn(),
 }));
@@ -25,7 +24,6 @@ describe('Login Component', () => {
 
   const mockNavigate = jest.fn();
   const mockToken = 'fake-token';
-  const mockRole = 'student';
 
   beforeEach(() => {
     useAuth0.mockReturnValue(mockAuth0);
@@ -38,40 +36,79 @@ describe('Login Component', () => {
     console.error.mockRestore();
   });
 
-  test('fetches token and navigates to the correct role-based page', async () => {
+  test('renders the login page when not authenticated', () => {
+    render(<Login />);
+
+    // Check that the Deakin logo and login button are displayed
+    expect(screen.getByAltText('Deakin University Logo')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument();
+  });
+
+  test('calls loginWithRedirect when login button is clicked', () => {
+    render(<Login />);
+
+    const loginButton = screen.getByRole('button', { name: /log in/i });
+    fireEvent.click(loginButton);
+
+    // Ensure loginWithRedirect is called when the button is clicked
+    expect(mockAuth0.loginWithRedirect).toHaveBeenCalled();
+  });
+
+  test('shows loading message when isLoading is true', () => {
+    mockAuth0.isLoading = true;
+    render(<Login />);
+
+    // Ensure the loading message is displayed
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+  });
+
+  test('fetches token and navigates to assignments when authenticated', async () => {
     mockAuth0.isAuthenticated = true;
 
     axios.post.mockResolvedValue({}); // Mock loginDB API call
-    axios.get.mockResolvedValue({
-      data: { ok: true, user: { role: mockRole } },
-    }); // Mock getUserRole API call
-
     render(<Login />);
 
+    // Wait for the token fetching and navigation to happen
     await waitFor(() => {
-      expect(axios.get).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.anything(),
-      );
-      expect(mockNavigate).toHaveBeenCalledWith('/assignments'); // Navigates based on role
+      expect(fetchAccessToken).toHaveBeenCalled(); // Ensure token is fetched
+      expect(mockNavigate).toHaveBeenCalledWith('/assignments'); // Ensure it navigates to assignments
     });
   });
 
-  test('handles errors during token fetching and navigating', async () => {
+  test('handles errors during token fetching and DB login', async () => {
     mockAuth0.isAuthenticated = true;
 
-    axios.post.mockRejectedValue(new Error('API Error')); // Mock failure in loginDB
-    axios.get.mockResolvedValue({
-      data: { ok: true, user: { role: mockRole } },
-    }); // Mock getUserRole
+    // Simulate token fetching success but loginDB API failure
+    axios.post.mockRejectedValue(new Error('API Error'));
+    render(<Login />);
+
+    await waitFor(() => {
+      // Ensure error is logged when loginDB fails
+      expect(console.error).toHaveBeenCalledWith(
+        'Error in login DB:',
+        expect.any(Error),
+      );
+    });
+  });
+
+  test('shows alert and logs error when no token is available', async () => {
+    mockAuth0.isAuthenticated = true;
+    fetchAccessToken.mockResolvedValue(null); // Simulate no token
+
+    // Mock window alert
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
 
     render(<Login />);
 
     await waitFor(() => {
       expect(console.error).toHaveBeenCalledWith(
-        'Error in handling token:',
-        expect.any(Error),
+        'No token available after all attempts.',
+      );
+      expect(window.alert).toHaveBeenCalledWith(
+        'Please turn off popup blocking settings and start again',
       );
     });
+
+    window.alert.mockRestore();
   });
 });
