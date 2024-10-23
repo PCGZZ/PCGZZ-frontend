@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Buffer } from 'buffer';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -13,6 +13,7 @@ import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import { getUserRole } from '../api/user.api';
 import FileDownload from '../api/FileDownload';
 import StartChat from '../api/StartChat';
+import { getSubmissionList } from '../api/submission.api';
 
 function AssignmentDetail() {
   const [role, setRole] = useState(null);
@@ -42,6 +43,7 @@ function AssignmentDetail() {
     photo: null,
     AI_model: '',
   });
+  const submissions = useMemo(() => [], []);
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
@@ -202,6 +204,32 @@ function AssignmentDetail() {
     }
   }, []);
 
+  const createSubmissions = useCallback(
+    async (tok) => {
+      try {
+        const submissionLi = await getSubmissionList(tok, asmtId);
+        submissionLi.forEach((subm) => {
+          const submObject = {
+            id: subm.submissionId,
+            email: subm.student.email,
+            name: subm.student.name,
+          };
+          const index = submissions.findIndex(
+            (existingSubm) => existingSubm.id === submObject.id,
+          );
+          if (index !== -1) {
+            submissions[index] = submObject;
+          } else {
+            submissions.push(submObject);
+          }
+        });
+      } catch (error) {
+        console.error('Error creating submissions:', error);
+      }
+    },
+    [submissions, asmtId],
+  );
+
   const fetchTokenAndPerform = useCallback(async () => {
     try {
       setLoading(true);
@@ -220,7 +248,12 @@ function AssignmentDetail() {
         const vaId = await retrieveAsmt(token);
         if (vaId) {
           await retrieveVA(vaId, token);
-          console.log('successfully fetch asmt and virtual adult');
+          if (userRole !== 'student') {
+            await createSubmissions(token);
+          }
+          console.log(
+            'successfully fetch asmt, virtual adult and submission list',
+          );
         }
       }
     } catch (error) {
@@ -233,6 +266,7 @@ function AssignmentDetail() {
     getAccessTokenWithPopup,
     retrieveAsmt,
     retrieveVA,
+    createSubmissions,
   ]);
 
   const handleSaveAsmt = async () => {
@@ -281,15 +315,14 @@ function AssignmentDetail() {
           ) : (
             <>
               <h2 className="sub-heading">
-                {assignmentData.title}
+                {assignmentData?.title}
                 <div className="assignment-actions">
                   {!isEditing && (
                     <Link to="/assignments">
                       <ArrowBackIcon sx={{ color: 'var(--darker)' }} />
                     </Link>
                   )}
-
-                  {role === 'educator' || role === 'admin' ? (
+                  {(role === 'educator' || role === 'admin') && (
                     <>
                       {isEditing && (
                         <button
@@ -308,9 +341,10 @@ function AssignmentDetail() {
                         {isEditing ? 'Cancel Edit' : 'Edit'}
                       </button>
                     </>
-                  ) : null}
+                  )}
                 </div>
               </h2>
+
               <div className="tabs">
                 <button
                   className={`tab-button ${activeTab === 'description' ? 'active' : ''}`}
@@ -319,22 +353,29 @@ function AssignmentDetail() {
                 >
                   Assignment Description
                 </button>
-                <button
-                  className={`tab-button ${activeTab === 'virtual-adult' ? 'active' : ''}`}
-                  type="button"
-                  onClick={() => setActiveTab('virtual-adult')}
-                >
-                  Virtual Adult
-                </button>
-                <button
-                  className={`tab-button ${activeTab === 'students-transcripts' ? 'active' : ''}`}
-                  type="button"
-                  onClick={() => setActiveTab('students-transcripts')}
-                >
-                  Students Transcripts
-                </button>
+
+                {/* Only show the Virtual Adult and Students Transcripts tabs for educators/admins */}
+                {role !== 'student' && (
+                  <>
+                    <button
+                      className={`tab-button ${activeTab === 'virtual-adult' ? 'active' : ''}`}
+                      type="button"
+                      onClick={() => setActiveTab('virtual-adult')}
+                    >
+                      Virtual Adult
+                    </button>
+                    <button
+                      className={`tab-button ${activeTab === 'students-transcripts' ? 'active' : ''}`}
+                      type="button"
+                      onClick={() => setActiveTab('students-transcripts')}
+                    >
+                      Students Transcripts
+                    </button>
+                  </>
+                )}
               </div>
 
+              {/* Description Section */}
               {activeTab === 'description' && (
                 <div>
                   <div className="form-container">
@@ -343,7 +384,7 @@ function AssignmentDetail() {
                       {isEditing ? (
                         <input
                           type="text"
-                          value={assignmentData.title}
+                          value={assignmentData?.title}
                           onChange={(e) =>
                             setAssignmentData({
                               ...assignmentData,
@@ -353,7 +394,7 @@ function AssignmentDetail() {
                         />
                       ) : (
                         <p className="section-content">
-                          {assignmentData.title}
+                          {assignmentData?.title}
                         </p>
                       )}
                     </div>
@@ -365,7 +406,7 @@ function AssignmentDetail() {
                       {isEditing ? (
                         <input
                           type="number"
-                          value={assignmentData.numOfQuestions}
+                          value={assignmentData?.numOfQuestions}
                           onChange={(e) =>
                             setAssignmentData({
                               ...assignmentData,
@@ -376,7 +417,7 @@ function AssignmentDetail() {
                         />
                       ) : (
                         <p className="section-content">
-                          {assignmentData.numOfQuestions}
+                          {assignmentData?.numOfQuestions}
                         </p>
                       )}
                     </div>
@@ -386,7 +427,7 @@ function AssignmentDetail() {
                       {isEditing ? (
                         <textarea
                           name="description"
-                          value={assignmentData.description}
+                          value={assignmentData?.description}
                           onChange={(e) =>
                             setAssignmentData({
                               ...assignmentData,
@@ -396,7 +437,7 @@ function AssignmentDetail() {
                         />
                       ) : (
                         <p className="section-content">
-                          {assignmentData.description}
+                          {assignmentData?.description}
                         </p>
                       )}
                     </div>
@@ -407,7 +448,7 @@ function AssignmentDetail() {
                         <input
                           type="date"
                           name="releaseDate"
-                          value={assignmentData.releaseDate}
+                          value={assignmentData?.releaseDate}
                           onChange={(e) =>
                             setAssignmentData({
                               ...assignmentData,
@@ -417,7 +458,7 @@ function AssignmentDetail() {
                         />
                       ) : (
                         <p className="section-content">
-                          {assignmentData.releaseDate}
+                          {assignmentData?.releaseDate}
                         </p>
                       )}
                     </div>
@@ -428,7 +469,7 @@ function AssignmentDetail() {
                         <input
                           type="date"
                           name="closeDate"
-                          value={assignmentData.closeDate}
+                          value={assignmentData?.closeDate}
                           onChange={(e) =>
                             setAssignmentData({
                               ...assignmentData,
@@ -438,7 +479,7 @@ function AssignmentDetail() {
                         />
                       ) : (
                         <p className="section-content">
-                          {assignmentData.closeDate}
+                          {assignmentData?.closeDate}
                         </p>
                       )}
                     </div>
@@ -447,28 +488,24 @@ function AssignmentDetail() {
                 </div>
               )}
 
-              {activeTab === 'virtual-adult' && (
+              {/* Virtual Adult Section: Visible only if not a student */}
+              {activeTab === 'virtual-adult' && role !== 'student' && (
                 <div className="form-container">
-                  {/* Name Section */}
                   <div className="form-section">
                     <h3 className="section-title">Name of Virtual Adult</h3>
                     {isEditing ? (
                       <input
                         type="text"
                         name="name"
-                        value={vaData.name}
+                        value={vaData?.name}
                         onChange={(e) =>
-                          setVaData({
-                            ...vaData,
-                            name: e.target.value,
-                          })
+                          setVaData({ ...vaData, name: e.target.value })
                         }
                       />
                     ) : (
-                      <p className="section-content">{originalVaData.name}</p>
+                      <p className="section-content">{originalVaData?.name}</p>
                     )}
                   </div>
-
                   {/* AI Model Section */}
                   <div className="form-section">
                     <h3 className="section-title">AI Model</h3>
@@ -596,30 +633,41 @@ function AssignmentDetail() {
                 </div>
               )}
 
-              {activeTab === 'students-transcripts' && (
+              {/* Students Transcripts Section: Visible only if not a student */}
+              {activeTab === 'students-transcripts' && role !== 'student' && (
                 <div className="form-section">
                   <table className="transcripts-table">
                     <thead>
                       <tr>
                         <th>Name</th>
-                        <th>Student ID</th>
-                        <th>Student Email</th>
+                        <th>Email</th>
                         <th>Transcripts Summary</th>
                         <th>Transcripts</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>Amy</td>
-                        <td>101171098</td>
-                        <td>name@username.deakin.edu.au</td>
-                        <td>
-                          <Link to="/transcript-amy">Click to see</Link>
-                        </td>
-                        <td>
-                          <Link to="/transcript-amy">Click to see</Link>
-                        </td>
-                      </tr>
+                      {submissions?.length > 0 ? (
+                        submissions.map((subm) => (
+                          <tr key={subm.id}>
+                            <td>{subm.name}</td>
+                            <td>{subm.email}</td>
+                            <td>
+                              <Link to={`/transcript/${subm.id}`}>
+                                Click to see
+                              </Link>
+                            </td>
+                            <td>
+                              <Link to={`/transcript-summary/${subm.id}`}>
+                                Click to see
+                              </Link>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="15">No transcripts.</td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>

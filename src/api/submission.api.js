@@ -47,4 +47,24 @@ const getSubmissions = async (
   }
 };
 
-export { getSubmissions, createSubmission };
+const getSubmissionList = async (token, assignmentId) => {
+  try {
+    const res = await axios.get(
+      `${BACKEND_API}/submission/list?assignmentId=${assignmentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+    if (res.data.ok) {
+      console.log('submission list:', res.data.submissions);
+      return res.data.submissions;
+    }
+  } catch (error) {
+    console.error('Error fetching submission:', error);
+  }
+};
+
+export { getSubmissions, createSubmission, getSubmissionList };
