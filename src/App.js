@@ -3,9 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { withAuthenticationRequired } from '@auth0/auth0-react';
 import { SnackbarProvider } from 'notistack';
 import Sidebar from './components/Sidebar';
-import SearchBar from './components/SearchBar';
-import Login from './components/Login';
-import TeacherLogin from './components/TeacherLogin';
+import Login from './page/Login';
 import AssignmentDetail from './components/AssignmentDetail';
 import VoiceChatBox from './components/VoiceChatBox';
 import VirtualAdultPage from './page/VirtualAdultPage';
@@ -56,10 +54,6 @@ function App() {
             <Route
               path="/assignments"
               element={<ProtectedRoute component={AssignmentsPage} />}
-            />
-            <Route
-              path="/teacher-login"
-              element={<ProtectedRoute component={TeacherLogin} />}
             />
             {/* Add the route for NewAssignmentPage */}
             <Route

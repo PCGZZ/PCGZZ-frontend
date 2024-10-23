@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import '../styles/NewAssignment.css';
 import '../styles/assignments.css';
 import { useAuth0 } from '@auth0/auth0-react';
-import fetchAccessToken from './Auth0Authen';
+import fetchAccessToken from '../api/Authen';
 import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 
 function NewAssignmentPage({ onSave, onCancel }) {
@@ -25,7 +25,11 @@ function NewAssignmentPage({ onSave, onCancel }) {
     const { name, value } = e.target;
 
     if (name === 'numOfQuestions') {
-      if ((value === '' || /^[0-9]+$/.test(value)) && value > 0) {
+      if (
+        (value === '' || /^[0-9]+$/.test(value)) &&
+        value > 0 &&
+        value < 100
+      ) {
         setAssignmentData({ ...assignmentData, [name]: value });
       }
     } else {
@@ -134,7 +138,6 @@ function NewAssignmentPage({ onSave, onCancel }) {
       alert('Please fill all fields.');
       return;
     }
-
     createVAandAsmt();
 
     onSave(assignmentData);

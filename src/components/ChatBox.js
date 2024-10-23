@@ -4,7 +4,7 @@ import { IconButton } from '@mui/material';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import '../styles/ChatBox.css';
 import { useAuth0 } from '@auth0/auth0-react';
-import fetchAccessToken from './Auth0Authen';
+import fetchAccessToken from '../api/Authen';
 import { AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import avatarKris from '../styles/image/avatar_account.jpg'; // Adjust the path
 import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar

@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import Login from './Login';
-import fetchAccessToken from './Auth0Authen'; // Mock the token fetching module
+import fetchAccessToken from '../api/Authen'; // Mock the token fetching module
 
 jest.mock('axios');
 jest.mock('@auth0/auth0-react');

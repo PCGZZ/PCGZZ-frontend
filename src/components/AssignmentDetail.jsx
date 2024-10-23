@@ -8,7 +8,7 @@ import Sidebar from './Sidebar';
 import SearchBar from './SearchBar';
 import '../styles/NewAssignment.css';
 import '../styles/assignments.css';
-import fetchAccessToken from './Auth0Authen';
+import fetchAccessToken from '../api/Authen';
 import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import { getUserRole } from '../api/user.api';
 import FileDownload from '../api/FileDownload';
@@ -33,29 +33,49 @@ function AssignmentDetail() {
     name: '',
     scenario: null,
     photo: null,
-    aiModel: '',
+    AI_model: '',
+  });
+  const [originalVaData, setOriginalVaData] = useState({
+    id: '',
+    name: '',
+    scenario: null,
+    photo: null,
+    AI_model: '',
   });
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
   };
 
+  const handleFileUpload = (e) => {
+    const { name, files } = e.target;
+    setVaData({
+      ...vaData,
+      [name]: files[0],
+    });
+  };
+
+  const checkUpdatedVaData = useCallback(() => {
+    const changedData = new FormData();
+    Object.entries(vaData).forEach(([key, value]) => {
+      if (value !== originalVaData[key] && key !== 'id') {
+        changedData.append(key, value);
+      }
+    });
+    return changedData;
+  }, [originalVaData, vaData]);
+
   const updateVA = useCallback(
     async (tok) => {
       try {
+        const changedData = checkUpdatedVaData();
         const res = await axios.patch(
-          `${BACKEND_API}/va?id=${vaData.id}`,
-          {
-            name: vaData.name,
-            description: vaData.description,
-            scenario: vaData.scenario,
-            photo: vaData.photo,
-            AI_model: vaData.aiModel,
-          },
+          `${BACKEND_API}/va?id=${originalVaData.id}`,
+          changedData,
           {
             headers: {
               Authorization: `Bearer ${tok}`,
-              'Content-Type': 'application/json',
+              'Content-Type': 'multipart/form-data',
             },
           },
         );
@@ -68,7 +88,7 @@ function AssignmentDetail() {
         console.error('Error updating virtual adult:', error);
       }
     },
-    [vaData],
+    [checkUpdatedVaData, originalVaData.id],
   );
 
   const updateAsmt = useCallback(
@@ -96,36 +116,6 @@ function AssignmentDetail() {
     [asmtId, assignmentData],
   );
 
-  const handleSaveAsmt = async () => {
-    const requiredFields = [
-      'title',
-      'description',
-      'numOfQuestions',
-      'releaseDate',
-      'closeDate',
-    ];
-    const emptyFields = requiredFields.filter(
-      (field) => !assignmentData[field],
-    );
-
-    if (emptyFields.length > 0) {
-      alert('Please fill all fields.');
-      return;
-    }
-
-    const token = await fetchAccessToken({
-      getAccessTokenSilently,
-      getAccessTokenWithPopup,
-      AUTH0_API_IDENTIFIER,
-      AUTH0_SCOPE,
-    });
-
-    if (token) {
-      // await updateVA(token);
-      await updateAsmt(token);
-    }
-  };
-
   const retrieveAsmt = useCallback(
     async (tok) => {
       try {
@@ -148,7 +138,7 @@ function AssignmentDetail() {
               res.data.assignment.dueDate,
             ).toLocaleDateString(),
           }));
-          setVaData((prevData) => ({
+          setOriginalVaData((prevData) => ({
             ...prevData,
             id: res.data.assignment.virtualAdult,
           }));
@@ -190,12 +180,23 @@ function AssignmentDetail() {
           };
         }
 
-        setVaData((prevData) => ({
+        setOriginalVaData((prevData) => ({
           ...prevData,
           name: res.data.va.name,
           scenario: resScenario,
           photo: base64Photo,
-          aiModel: res.data.va.AI_model,
+          AI_model: res.data.va.AI_model,
+        }));
+
+        console.log(res.data.va.AI_model);
+
+        setVaData((prevData) => ({
+          ...prevData,
+          id: res.data.va._id,
+          name: res.data.va.name,
+          scenario: resScenario,
+          photo: base64Photo,
+          AI_model: res.data.va.AI_model,
         }));
       }
     } catch (error) {
@@ -221,6 +222,7 @@ function AssignmentDetail() {
         const vaId = await retrieveAsmt(token);
         if (vaId) {
           await retrieveVA(vaId, token);
+          console.log('successfully fetch asmt and virtual adult');
         }
       }
     } catch (error) {
@@ -234,6 +236,37 @@ function AssignmentDetail() {
     retrieveAsmt,
     retrieveVA,
   ]);
+
+  const handleSaveAsmt = async () => {
+    const requiredFields = [
+      'title',
+      'description',
+      'numOfQuestions',
+      'releaseDate',
+      'closeDate',
+    ];
+    const emptyFields = requiredFields.filter(
+      (field) => !assignmentData[field],
+    );
+
+    if (emptyFields.length > 0) {
+      alert('Please fill all fields.');
+      return;
+    }
+
+    const token = await fetchAccessToken({
+      getAccessTokenSilently,
+      getAccessTokenWithPopup,
+      AUTH0_API_IDENTIFIER,
+      AUTH0_SCOPE,
+    });
+
+    if (token) {
+      await updateAsmt(token);
+      await updateVA(token);
+      await fetchTokenAndPerform();
+    }
+  };
 
   useEffect(() => {
     fetchTokenAndPerform();
@@ -418,51 +451,147 @@ function AssignmentDetail() {
 
               {activeTab === 'virtual-adult' && (
                 <div className="form-container">
+                  {/* Name Section */}
                   <div className="form-section">
                     <h3 className="section-title">Name of Virtual Adult</h3>
-                    <p className="section-content">{vaData.name}</p>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        name="name"
+                        value={vaData.name}
+                        onChange={(e) =>
+                          setVaData({
+                            ...vaData,
+                            name: e.target.value,
+                          })
+                        }
+                      />
+                    ) : (
+                      <p className="section-content">{originalVaData.name}</p>
+                    )}
                   </div>
 
+                  {/* AI Model Section */}
                   <div className="form-section">
                     <h3 className="section-title">AI Model</h3>
-                    <p className="section-content">{vaData.aiModel}</p>
+                    {isEditing ? (
+                      <select
+                        name="AI_model"
+                        value={vaData.AI_model}
+                        onChange={(e) =>
+                          setVaData({
+                            ...vaData,
+                            AI_model: e.target.value,
+                          })
+                        }
+                      >
+                        <option value="Chat GPT 4o">Chat GPT 4o</option>
+                        <option value="Chat GPT 4o mini">
+                          Chat GPT 4o mini
+                        </option>
+                      </select>
+                    ) : (
+                      <p className="section-content">
+                        {originalVaData.AI_model}
+                      </p>
+                    )}
                   </div>
 
+                  {/* Photo Section */}
                   <div className="form-section">
                     <h3 className="section-title">Photo of Virtual Adult</h3>
                     <div className="section-content">
-                      {vaData.photo ? (
-                        <>
-                          <img
-                            className="virtual-adult-photo"
-                            src={vaData.photo}
-                            alt="Virtual Adult"
+                      {isEditing ? (
+                        <div>
+                          {vaData.photo ? (
+                            <div>
+                              <img
+                                className="virtual-adult-photo"
+                                src={
+                                  vaData.photo instanceof File
+                                    ? URL.createObjectURL(vaData.photo)
+                                    : vaData.photo
+                                }
+                                alt="Virtual Adult"
+                              />
+                              <p>Currently uploaded photo</p>
+                            </div>
+                          ) : (
+                            <p>You have not uploaded photo</p>
+                          )}
+                          <input
+                            type="file"
+                            name="photo"
+                            accept="image/jpeg"
+                            onChange={handleFileUpload}
                           />
-                          <a
-                            href={vaData.photo}
-                            download="virtual_adult_photo.jpg"
-                            className="download-button"
-                          >
-                            Download Photo
-                          </a>
-                        </>
+                          <p>Only .jpeg or .jpg files are accepted</p>
+                        </div>
                       ) : (
-                        <p>No photo uploaded</p>
+                        <div>
+                          {originalVaData.photo ? (
+                            <>
+                              <img
+                                className="virtual-adult-photo"
+                                src={originalVaData.photo}
+                                alt="Virtual Adult"
+                              />
+                              <a
+                                href={originalVaData.photo}
+                                download="virtual_adult_photo.jpg"
+                                className="download-button"
+                              >
+                                Download Photo
+                              </a>
+                            </>
+                          ) : (
+                            <p>No photo uploaded</p>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
 
+                  {/* Scenario Section */}
                   <div className="form-section">
                     <h3 className="section-title">Scenario</h3>
                     <div className="section-content">
-                      {vaData.scenario ? (
-                        <FileDownload
-                          base64Data={vaData.scenario.data}
-                          fileType={vaData.scenario.contentType}
-                          fileName={vaData.scenario.filename}
-                        />
+                      {isEditing ? (
+                        <>
+                          {vaData.scenario ? (
+                            <div>
+                              <p>Currently uploaded scenario</p>
+                            </div>
+                          ) : (
+                            <div>
+                              <p>
+                                You have not uploaded scenario, please upload
+                                scenario
+                              </p>
+                            </div>
+                          )}
+                          <input
+                            type="file"
+                            name="scenario"
+                            accept=".pdf,.doc,.docx,.txt"
+                            onChange={handleFileUpload}
+                          />
+                          <p style={{ color: '#828282' }}>
+                            Only .txt or .pdf files are accepted
+                          </p>
+                        </>
                       ) : (
-                        <p>No scenario uploaded</p>
+                        <div>
+                          {originalVaData.scenario ? (
+                            <FileDownload
+                              base64Data={originalVaData.scenario.data}
+                              fileType={originalVaData.scenario.contentType}
+                              fileName={originalVaData.scenario.filename}
+                            />
+                          ) : (
+                            <p>No scenario uploaded</p>
+                          )}
+                        </div>
                       )}
                     </div>
                   </div>
