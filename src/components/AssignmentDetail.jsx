@@ -188,8 +188,6 @@ function AssignmentDetail() {
           AI_model: res.data.va.AI_model,
         }));
 
-        console.log(res.data.va.AI_model);
-
         setVaData((prevData) => ({
           ...prevData,
           id: res.data.va._id,

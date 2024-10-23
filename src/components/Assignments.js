@@ -88,7 +88,6 @@ function Assignments() {
     const func = async () => {
       await fetchTokenAndRoleAndAsmts();
     };
-
     func();
   }, [fetchTokenAndRoleAndAsmts]);
 
@@ -102,12 +101,7 @@ function Assignments() {
 
   const handleSaveAssignment = async () => {
     setShowNewAssignmentForm(false);
-
-    try {
-      await fetchTokenAndRoleAndAsmts();
-    } catch (error) {
-      console.error('Error fetching assignments after saving:', error);
-    }
+    await fetchTokenAndRoleAndAsmts();
   };
 
   const handleCancelAssignment = () => {

@@ -16,7 +16,7 @@ function NewAssignmentPage({ onSave, onCancel }) {
     releaseDate: '',
     closeDate: '',
     virtualAdultName: '',
-    aiModel: 'Chat GPT 4',
+    aiModel: 'Chat GPT 4o',
     virtualAdultPhoto: null,
     scenarioFile: null,
   });
@@ -119,7 +119,7 @@ function NewAssignmentPage({ onSave, onCancel }) {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const requiredFields = [
       'title',
       'description',
@@ -138,9 +138,9 @@ function NewAssignmentPage({ onSave, onCancel }) {
       alert('Please fill all fields.');
       return;
     }
-    createVAandAsmt();
+    await createVAandAsmt();
 
-    onSave(assignmentData);
+    onSave();
   };
 
   const handleCancel = () => {
