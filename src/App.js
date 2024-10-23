@@ -8,6 +8,7 @@ import AssignmentDetail from './components/AssignmentDetail';
 import VoiceChatBox from './components/VoiceChatBox';
 import VirtualAdultPage from './page/VirtualAdultPage';
 import AssignmentsPage from './page/AssignmentsPage';
+import TranscriptPage from './page/TranscriptPage';
 import './styles/App.css';
 import StudentList from './components/StudentsList';
 import { UserProvider } from './context/UserContext';
@@ -55,10 +56,13 @@ function App() {
               path="/assignments"
               element={<ProtectedRoute component={AssignmentsPage} />}
             />
-            {/* Add the route for NewAssignmentPage */}
             <Route
               path="/assignment-detail/:id"
               element={<ProtectedRoute component={AssignmentDetail} />}
+            />
+            <Route
+              path="/transcript/:submissionId"
+              element={<ProtectedRoute component={TranscriptPage} />}
             />
             <Route
               path="/voice-adult/:submissionId"
