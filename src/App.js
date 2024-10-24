@@ -5,10 +5,10 @@ import { SnackbarProvider } from 'notistack';
 import Sidebar from './components/Sidebar';
 import Login from './page/Login';
 import AssignmentDetail from './components/AssignmentDetail';
-import VoiceChatBox from './components/VoiceChatBox';
 import VirtualAdultPage from './page/VirtualAdultPage';
 import AssignmentsPage from './page/AssignmentsPage';
 import TranscriptPage from './page/TranscriptPage';
+import VoiceVirtualAdultPage from './page/VoiceVirtualAdultPage';
 import './styles/App.css';
 import StudentList from './components/StudentsList';
 import { UserProvider } from './context/UserContext';
@@ -16,17 +16,6 @@ import { UserProvider } from './context/UserContext';
 function ProtectedRoute({ component, ...args }) {
   const Component = withAuthenticationRequired(component, args);
   return <Component />;
-}
-
-function VoiceAdultPage() {
-  return (
-    <>
-      <Sidebar />
-      <div className="main-layout">
-        <VoiceChatBox />
-      </div>
-    </>
-  );
 }
 
 function StudentListPage() {
@@ -65,8 +54,8 @@ function App() {
               element={<ProtectedRoute component={TranscriptPage} />}
             />
             <Route
-              path="/voice-adult/:submissionId"
-              element={<ProtectedRoute component={VoiceAdultPage} />}
+              path="/voice-adult/:assignmentId"
+              element={<ProtectedRoute component={VoiceVirtualAdultPage} />}
             />
             <Route
               path="/user-list"

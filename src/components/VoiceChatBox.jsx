@@ -1,5 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 // import SendIcon from '@mui/icons-material/Send';
 import { IconButton } from '@mui/material';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
@@ -13,10 +12,11 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 import { v4 } from 'uuid';
 import { enqueueSnackbar } from 'notistack';
-import { AISendMessage } from '../api/AI.api';
+import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
+import { AISendMessage, AIGetVaPhoto } from '../api/AI.api';
 import VoiceChatMessage from './VoiceMessage';
 // import InputBar from './voiceModule/InputBar';
-import { getSubmissions } from '../api/submission.api';
+import { createSubmission } from '../api/submission.api';
 
 const waveSvg = (
   <svg
@@ -165,7 +165,7 @@ const waveSvg = (
   </svg>
 );
 
-function VoiceChatBox() {
+function VoiceChatBox({ assignmentId }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [chances, setChances] = useState(15); // Initialize with 15 chances
@@ -174,11 +174,13 @@ function VoiceChatBox() {
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [voiceError, setVoiceError] = useState('');
+  const [vaPhoto, setVaPhoto] = useState(avatarTeacher);
+
   // const [submission, setSubmission] = useState();
   // const [submissionId, setSubmissionId] = useState();
   const [textShow, setTextShow] = useState([false, true, false]); // Showing transcript of voice message
   const [isLoading, setIsLoading] = useState(true); // New loading state
-  const { assignmentId } = useParams();
+  const [submissionId, setSubmissionId] = useState();
   const sendMessage = useCallback(async () => {
     const token = await getAccessTokenSilently();
     // console.log(input);
@@ -192,7 +194,7 @@ function VoiceChatBox() {
       {
         agent: '66c5965099528d233698d739',
         question: input,
-        submission: '66ed1a2aa739d9ae9c61d21f', // demo submission id
+        submission: submissionId, // submission id
       },
       (data) => {
         // console.log(data);
@@ -204,50 +206,119 @@ function VoiceChatBox() {
     );
 
     setInput('');
-  }, [chances, getAccessTokenSilently, input, messages, textShow]);
+  }, [
+    chances,
+    getAccessTokenSilently,
+    input,
+    messages,
+    textShow,
+    submissionId,
+  ]);
+
+  const messagesEndRef = useRef(null);
+
+  // Scroll to the bottom of the message container
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const getVaPhoto = useCallback(
+    async (tok) => {
+      try {
+        await AIGetVaPhoto(tok, assignmentId, setVaPhoto);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [assignmentId],
+  );
+
+  // Fetch the token and submission details including chat history
+  const fetchTokenAndSubmission = useCallback(async () => {
+    try {
+      const token = await getAccessTokenSilently();
+
+      if (token) {
+        await getVaPhoto(token);
+        const loadedSubmission = await createSubmission(token, assignmentId);
+        if (loadedSubmission) {
+          // setSubmission(loadedSubmission);
+          setChances(loadedSubmission.numOfQuestions);
+          setSubmissionId(loadedSubmission._id);
+
+          // Load chat history from submissionModel
+          if (
+            loadedSubmission.chatHistory &&
+            loadedSubmission.chatHistory.length > 0
+          ) {
+            const loadedMessages = loadedSubmission.chatHistory.map((chat) => ({
+              text: chat.content,
+              sender: chat.role === 'user' ? 'user' : 'bot',
+              id: v4(),
+            }));
+            setMessages(loadedMessages);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching token or submission:', error);
+    } finally {
+      setIsLoading(false); // End loading state when data is fetched
+    }
+  }, [getAccessTokenSilently, getVaPhoto, assignmentId]);
 
   // Load the chat history when the page loads
   useEffect(() => {
-    const func = async () => {
-      try {
-        const token = await getAccessTokenSilently();
-        if (token) {
-          const loadedSubmission = await getSubmissions(token, {
-            assignmentId,
-          });
-          if (loadedSubmission) {
-            // setSubmission(loadedSubmission);
-            setChances(loadedSubmission.numOfQuestions);
-            // setSubmissionId(loadedSubmission._id);
+    fetchTokenAndSubmission();
+  }, [fetchTokenAndSubmission]);
 
-            // Load chat history from submissionModel
-            if (
-              loadedSubmission.chatHistory &&
-              loadedSubmission.chatHistory.length > 0
-            ) {
-              const loadedMessages = loadedSubmission.chatHistory.map(
-                (chat, index) => ({
-                  text: chat.content,
-                  sender: chat.role === 'user' ? 'user' : 'bot',
-                  id: index, // Generate a key using the index
-                }),
-              );
-              setMessages(loadedMessages);
-            }
-          }
-        }
-      } catch (error) {
-        enqueueSnackbar(`Error fetching token or submission:${error}`, {
-          variant: 'error',
-          autoHideDuration: 5000,
-        });
-      } finally {
-        setIsLoading(false); // End loading state when data is fetched
-      }
-    };
-    // fetchTokenAndSubmission();
-    func();
-  }, [getAccessTokenSilently, assignmentId]);
+  // Scroll to the bottom whenever the messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Load the chat history when the page loads
+  // useEffect(() => {
+  //   const func = async () => {
+  //     try {
+  //       const token = await getAccessTokenSilently();
+  //       if (token) {
+  //         const loadedSubmission = await getSubmissions(token, {
+  //           assignmentId,
+  //         });
+  //         if (loadedSubmission) {
+  //           // setSubmission(loadedSubmission);
+  //           setChances(loadedSubmission.numOfQuestions);
+  //           // setSubmissionId(loadedSubmission._id);
+
+  //           // Load chat history from submissionModel
+  //           if (
+  //             loadedSubmission.chatHistory &&
+  //             loadedSubmission.chatHistory.length > 0
+  //           ) {
+  //             const loadedMessages = loadedSubmission.chatHistory.map(
+  //               (chat, index) => ({
+  //                 text: chat.content,
+  //                 sender: chat.role === 'user' ? 'user' : 'bot',
+  //                 id: index, // Generate a key using the index
+  //               }),
+  //             );
+  //             setMessages(loadedMessages);
+  //           }
+  //         }
+  //       }
+  //     } catch (error) {
+  //       enqueueSnackbar(`Error fetching token or submission:${error}`, {
+  //         variant: 'error',
+  //         autoHideDuration: 5000,
+  //       });
+  //     } finally {
+  //       setIsLoading(false); // End loading state when data is fetched
+  //     }
+  //   };
+  //   // fetchTokenAndSubmission();
+  //   func();
+  // }, [getAccessTokenSilently, assignmentId]);
 
   // speak text to voice
   const speakText = (textToSpeak) => {

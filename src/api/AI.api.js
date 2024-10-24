@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import axios from 'axios';
 import { BACKEND_API } from '../config';
 
 const AISendMessage = (body, op, token) => {
@@ -24,4 +25,35 @@ const AISendMessage = (body, op, token) => {
     });
 };
 
-export { AISendMessage };
+const AIGetVaPhoto = async (tok, assignmentId, setVaPhoto) => {
+  const res1 = await axios.get(`${BACKEND_API}/assignment?id=${assignmentId}`, {
+    headers: {
+      Authorization: `Bearer ${tok}`,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (res1.data.ok) {
+    const vaId = res1.data.assignment.virtualAdult;
+    try {
+      const res = await axios.get(`${BACKEND_API}/va?id=${vaId}`, {
+        headers: {
+          Authorization: `Bearer ${tok}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      if (res.data.ok) {
+        if (res.data.va.photo && res.data.va.photo.data.type === 'Buffer') {
+          const buffer = Buffer.from(res.data.va.photo.data.data).toString(
+            'base64',
+          );
+          const base64Photo = `data:image/jpeg;base64,${buffer}`;
+          setVaPhoto(base64Photo);
+          console.log('Successfully get va photo');
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+};
+export { AISendMessage, AIGetVaPhoto };
