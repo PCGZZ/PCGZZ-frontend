@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { Buffer } from 'buffer';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import SendIcon from '@mui/icons-material/Send';
 import { IconButton } from '@mui/material';
@@ -5,7 +7,7 @@ import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import '../styles/ChatBox.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import fetchAccessToken from '../api/Authen';
-import { AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
+import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import avatarKris from '../styles/image/avatar_account.jpg'; // Adjust the path
 import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
 import { AISendMessage } from '../api/AI.api';
@@ -17,8 +19,11 @@ function ChatBox({ assignmentId }) {
   const [chances, setChances] = useState(15); // Initialize with 15 chances
   const [submission, setSubmission] = useState();
   const [submissionId, setSubmissionId] = useState();
+  const [vaPhoto, setVaPhoto] = useState(avatarTeacher);
   const [isLoading, setIsLoading] = useState(true); // New loading state
   const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
+  const generateUniqueId = () =>
+    `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
   // Reference for the chat message container
   const messagesEndRef = useRef(null);
@@ -27,6 +32,51 @@ function ChatBox({ assignmentId }) {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const getVaPhoto = useCallback(
+    async (tok) => {
+      try {
+        const res1 = await axios.get(
+          `${BACKEND_API}/assignment?id=${assignmentId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${tok}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+        if (res1.data.ok) {
+          const vaId = res1.data.assignment.virtualAdult;
+          try {
+            const res = await axios.get(`${BACKEND_API}/va?id=${vaId}`, {
+              headers: {
+                Authorization: `Bearer ${tok}`,
+                'Content-Type': 'application/json',
+              },
+            });
+            if (res.data.ok) {
+              if (
+                res.data.va.photo &&
+                res.data.va.photo.data.type === 'Buffer'
+              ) {
+                const buffer = Buffer.from(
+                  res.data.va.photo.data.data,
+                ).toString('base64');
+                const base64Photo = `data:image/jpeg;base64,${buffer}`;
+                setVaPhoto(base64Photo);
+                console.log('Successfully get va photo');
+              }
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [assignmentId],
+  );
 
   // Fetch the token and submission details including chat history
   const fetchTokenAndSubmission = useCallback(async () => {
@@ -39,6 +89,7 @@ function ChatBox({ assignmentId }) {
       });
 
       if (token) {
+        await getVaPhoto(token);
         const loadedSubmission = await createSubmission(token, assignmentId);
         if (loadedSubmission) {
           setSubmission(loadedSubmission);
@@ -50,13 +101,11 @@ function ChatBox({ assignmentId }) {
             loadedSubmission.chatHistory &&
             loadedSubmission.chatHistory.length > 0
           ) {
-            const loadedMessages = loadedSubmission.chatHistory.map(
-              (chat, index) => ({
-                text: chat.content,
-                sender: chat.role === 'user' ? 'user' : 'bot',
-                id: index, // Generate a key using the index
-              }),
-            );
+            const loadedMessages = loadedSubmission.chatHistory.map((chat) => ({
+              text: chat.content,
+              sender: chat.role === 'user' ? 'user' : 'bot',
+              id: generateUniqueId(),
+            }));
             setMessages(loadedMessages);
           }
         }
@@ -66,7 +115,12 @@ function ChatBox({ assignmentId }) {
     } finally {
       setIsLoading(false); // End loading state when data is fetched
     }
-  }, [getAccessTokenSilently, getAccessTokenWithPopup, assignmentId]);
+  }, [
+    getAccessTokenSilently,
+    getAccessTokenWithPopup,
+    assignmentId,
+    getVaPhoto,
+  ]);
 
   // Load the chat history when the page loads
   useEffect(() => {
@@ -132,7 +186,7 @@ function ChatBox({ assignmentId }) {
           <div key={msg.id} className={`chatbox-message ${msg.sender}`}>
             <img
               className="avatar"
-              src={msg.sender === 'user' ? avatarKris : avatarTeacher}
+              src={msg.sender === 'user' ? avatarKris : vaPhoto}
               alt={`${msg.sender} avatar`}
             />
             <p>{msg.text}</p>

@@ -26,6 +26,7 @@ function AssignmentDetail() {
     title: '',
     description: '',
     numOfQuestions: '',
+    isVoice: false,
     releaseDate: '',
     closeDate: '',
   });
@@ -133,6 +134,7 @@ function AssignmentDetail() {
             title: res.data.assignment.title,
             description: res.data.assignment.description,
             numOfQuestions: res.data.assignment.numOfQuestions,
+            isVoice: res.data.assignment.isVoice,
             releaseDate: new Date(
               res.data.assignment.releaseDate,
             ).toLocaleDateString(),
@@ -443,6 +445,31 @@ function AssignmentDetail() {
                     </div>
 
                     <div className="form-section">
+                      <h3 className="section-title">Interaction Mode</h3>
+                      {isEditing ? (
+                        <select
+                          name="interaction_mode"
+                          value={
+                            assignmentData?.isVoice === true ? 'Verbal' : 'Text'
+                          }
+                          onChange={(e) =>
+                            setAssignmentData({
+                              ...assignmentData,
+                              isVoice: e.target.value === 'Verbal',
+                            })
+                          }
+                        >
+                          <option value="Text">Text</option>
+                          <option value="Verbal">Verbal</option>
+                        </select>
+                      ) : (
+                        <p className="section-content">
+                          {assignmentData?.isVoice === true ? 'Verbal' : 'Text'}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="form-section">
                       <h3 className="section-title">Release Date</h3>
                       {isEditing ? (
                         <input
@@ -484,7 +511,10 @@ function AssignmentDetail() {
                       )}
                     </div>
                   </div>
-                  <StartChat assignmentId={asmtId} />
+                  <StartChat
+                    assignmentId={asmtId}
+                    isVoiceMode={assignmentData.isVoice}
+                  />
                 </div>
               )}
 
