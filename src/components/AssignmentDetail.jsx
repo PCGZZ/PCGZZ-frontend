@@ -56,7 +56,6 @@ function AssignmentDetail() {
     } catch (error) {
       console.error('Error in handleViewTranscript:', error);
     }
-    console.log(currentSubmission.id);
   };
 
   const handleEdit = () => {
