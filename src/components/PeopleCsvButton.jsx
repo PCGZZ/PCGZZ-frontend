@@ -47,9 +47,11 @@ function CsvUploadButton({ op }) {
 
   return (
     <div>
+      {file ? `${file.name}  ` : 'No file selecteds '}
+
       <input
         accept=".csv"
-        style={{ display: 'none' }}
+        style={{ display: 'none', marginLeft: '10px' }}
         id="csv-upload"
         type="file"
         onChange={handleFileChange}

@@ -16,12 +16,14 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
 } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { getAllUsers, updateUser, deleteUser } from '../api/user.api';
 import PeopleCsvButton from './PeopleCsvButton';
 
@@ -238,13 +240,9 @@ export default function StudentList() {
           height="10vh"
         >
           <h1>List Of People</h1>
-
-          {/* <input
-            type="file"
-            name="students"
-            accept="csv"
-            // onChange={handleFileUpload}
-          /> */}
+          <IconButton onClick={reloadUsers} color="blue">
+            <RefreshIcon />
+          </IconButton>
           <PeopleCsvButton op={reloadUsers} />
         </Box>
         <Box
