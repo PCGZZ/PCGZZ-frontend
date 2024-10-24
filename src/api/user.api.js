@@ -38,4 +38,25 @@ async function updateUser(token, updatedUser) {
   }
 }
 
-export { getAllUsers, updateUser };
+async function deleteUser(token, id) {
+  console.log(id);
+  try {
+    const res = await axios.delete(`${BACKEND_API}/users/`, {
+      params: {
+        id,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (res.data.ok) {
+      return { ok: true };
+    }
+  } catch (error) {
+    console.error('Error deleting Students:', error);
+    return { ok: false, error };
+  }
+}
+
+export { getAllUsers, updateUser, deleteUser };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { MemoryRouter as Router } from 'react-router-dom';
 import '@testing-library/jest-dom';
 import { render, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
@@ -49,7 +50,11 @@ afterEach(() => {
 
 describe('Assignments Component', () => {
   test('renders the component correctly', async () => {
-    render(<Assignments />);
+    render(
+      <Router>
+        <Assignments />
+      </Router>,
+    );
 
     // Check if the heading is displayed
     expect(screen.getByText('Assignments')).toBeInTheDocument();
@@ -83,7 +88,11 @@ describe('Assignments Component', () => {
   test('renders "No assignments" when there are no assignments', async () => {
     axios.get.mockResolvedValue({ data: { ok: true, assignments: [] } });
 
-    render(<Assignments />);
+    render(
+      <Router>
+        <Assignments />
+      </Router>,
+    );
 
     // Wait for the assignments API call
     await waitFor(() =>
@@ -97,7 +106,11 @@ describe('Assignments Component', () => {
   test('handles API errors gracefully', async () => {
     axios.get.mockRejectedValue(new Error('API Error'));
 
-    render(<Assignments />);
+    render(
+      <Router>
+        <Assignments />
+      </Router>,
+    );
 
     // Ensure the error doesn't break rendering
     await waitFor(() =>

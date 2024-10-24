@@ -7,18 +7,37 @@ import {
   GridActionsCellItem,
   GridRowEditStopReasons,
 } from '@mui/x-data-grid';
-import { Container, Box } from '@mui/material';
+import {
+  Container,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
-import { getAllUsers, updateUser } from '../api/user.api';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { getAllUsers, updateUser, deleteUser } from '../api/user.api';
+import PeopleCsvButton from './PeopleCsvButton';
 
 export default function StudentList() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [rowModesModel, setRowModesModel] = useState({});
   const { getAccessTokenSilently } = useAuth0();
+  const [confirmDialogId, setConfirmDialogId] = useState(null);
+  const handleClickConfirmDialogOpen = (id) => {
+    setConfirmDialogId(id);
+  };
+
+  const handleConfirmDialogClose = () => {
+    setConfirmDialogId(null);
+  };
 
   const handleProcessRowUpdate = async (newRow, oldRow) => {
     // Call your API here with the updated user object
@@ -119,6 +138,28 @@ export default function StudentList() {
   const handleRowModesModelChange = (newRowModesModel) => {
     setRowModesModel(newRowModesModel);
   };
+
+  const handleRowDelete = (id) => () => {
+    setConfirmDialogId(id);
+  };
+  const handleUserDelete = async (id) => {
+    console.log('Deleting user:', id);
+    const token = await getAccessTokenSilently();
+    const res = deleteUser(token, id);
+    if (!res.ok) {
+      enqueueSnackbar('Failed to delete', {
+        variant: 'error',
+        autoHideDuration: 5000,
+      });
+      return;
+    }
+    // If API call is successful, update the state
+    setUsers(users.filter((row) => row.id !== id));
+    enqueueSnackbar('User deleted successfully', {
+      variant: 'success',
+      autoHideDuration: 5000,
+    });
+  };
   // DataGrid columns to show
   const columns = [
     { field: 'count', headerName: '#', width: 50 },
@@ -170,52 +211,106 @@ export default function StudentList() {
             onClick={handleEditClick(id)}
             color="inherit"
           />,
+          <GridActionsCellItem
+            icon={<DeleteIcon />}
+            label="Delete"
+            className="textPrimary"
+            onClick={handleRowDelete(id)}
+            color="inherit"
+          />,
         ];
       },
     },
     // { field: 'createdAt', headerName: 'Created At', width: 200 },
   ];
   return (
-    <Container>
-      <h1>List Of People</h1>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 'calc(95vh - 32px)', // Full height minus padding
-          padding: '16px', // Padding around the grid
-        }}
-      >
-        {loading && <p>Loading...</p>}
-        {!loading && (
-          <div style={{ height: '100%', width: '100%' }}>
-            <DataGrid
-              rows={users}
-              columns={columns}
-              pageSize={5}
-              slots={{ toolbar: GridToolbar }}
-              slotProps={{
-                toolbar: {
-                  showQuickFilter: true,
-                },
-              }}
-              initialState={{
-                filter: {
-                  filterModel: {
-                    items: [],
+    <>
+      <Container>
+        <Box
+          display="flex"
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="space-between"
+          height="10vh"
+        >
+          <h1>List Of People</h1>
+
+          {/* <input
+            type="file"
+            name="students"
+            accept="csv"
+            // onChange={handleFileUpload}
+          /> */}
+          <PeopleCsvButton />
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: 'calc(95vh - 32px)', // Full height minus padding
+            padding: '16px', // Padding around the grid
+          }}
+        >
+          {loading && <p>Loading...</p>}
+          {!loading && (
+            <div style={{ height: '100%', width: '100%' }}>
+              <DataGrid
+                rows={users}
+                columns={columns}
+                pageSize={5}
+                slots={{ toolbar: GridToolbar }}
+                slotProps={{
+                  toolbar: {
+                    showQuickFilter: true,
                   },
-                },
-              }}
-              editMode="row"
-              rowModesModel={rowModesModel}
-              onRowModesModelChange={handleRowModesModelChange}
-              onRowEditStop={handleRowEditStop}
-              processRowUpdate={handleProcessRowUpdate}
-            />
-          </div>
-        )}
-      </Box>
-    </Container>
+                }}
+                initialState={{
+                  filter: {
+                    filterModel: {
+                      items: [],
+                    },
+                  },
+                }}
+                editMode="row"
+                rowModesModel={rowModesModel}
+                onRowModesModelChange={handleRowModesModelChange}
+                onRowEditStop={handleRowEditStop}
+                processRowUpdate={handleProcessRowUpdate}
+              />
+            </div>
+          )}
+        </Box>
+      </Container>
+      <Dialog
+        open={confirmDialogId !== null}
+        onClose={handleConfirmDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirm User Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this user? This action cannot be
+            undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelClick} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={async () => {
+              handleUserDelete(confirmDialogId);
+              handleConfirmDialogClose();
+            }}
+            color="error"
+            autoFocus
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 }
