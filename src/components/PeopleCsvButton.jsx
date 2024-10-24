@@ -1,36 +1,47 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
+import { enqueueSnackbar } from 'notistack';
+import { useAuth0 } from '@auth0/auth0-react';
+import { uploadCSV } from '../api/user.api';
 
-function CsvUploadButton() {
-  const [file, setFile] = useState(null);
+function CsvUploadButton({ op }) {
+  const [file, setFile] = useState('');
+  const { getAccessTokenSilently } = useAuth0();
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
 
-  const uploadCsv = async () => {
+  const handleUploadCsv = async () => {
     if (!file) {
       alert('Please upload a CSV file first!');
       return;
     }
+    const token = await getAccessTokenSilently();
 
     const formData = new FormData();
-    formData.append('file', file);
-
+    formData.append('csv', file);
     try {
-      const response = await fetch('/api/upload-csv', {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await uploadCSV(token, formData);
 
       if (response.ok) {
-        console.log('File uploaded successfully!');
+        enqueueSnackbar('File uploaded successfully!', {
+          autoHideDuration: 5000,
+          variant: 'success',
+        });
+        op();
       } else {
-        console.error('Failed to upload file');
+        enqueueSnackbar('Failed to uploaded file:', {
+          autoHideDuration: 5000,
+          variant: 'error',
+        });
       }
     } catch (error) {
-      console.error('Error uploading file:', error);
+      enqueueSnackbar(`Error uploading file: ${error}`, {
+        autoHideDuration: 5000,
+        variant: 'error',
+      });
     }
   };
 
@@ -51,7 +62,8 @@ function CsvUploadButton() {
       <Button
         variant="contained"
         color="secondary"
-        onClick={uploadCsv}
+        onClick={handleUploadCsv}
+        disabled={!file}
         style={{ marginLeft: '10px' }}
       >
         Submit to Backend

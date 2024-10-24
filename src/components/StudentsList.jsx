@@ -79,6 +79,10 @@ export default function StudentList() {
     }
   };
 
+  const reloadUsers = () => {
+    setLoading(true);
+  };
+
   useEffect(() => {
     const getStudents = async () => {
       const token = await getAccessTokenSilently();
@@ -106,7 +110,7 @@ export default function StudentList() {
       setLoading(false);
     };
     getStudents();
-  }, [setUsers, getAccessTokenSilently]);
+  }, [setUsers, getAccessTokenSilently, loading]);
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -143,9 +147,9 @@ export default function StudentList() {
     setConfirmDialogId(id);
   };
   const handleUserDelete = async (id) => {
-    console.log('Deleting user:', id);
     const token = await getAccessTokenSilently();
-    const res = deleteUser(token, id);
+    const res = await deleteUser(token, id);
+    console.log('Delete response:', res);
     if (!res.ok) {
       enqueueSnackbar('Failed to delete', {
         variant: 'error',
@@ -241,7 +245,7 @@ export default function StudentList() {
             accept="csv"
             // onChange={handleFileUpload}
           /> */}
-          <PeopleCsvButton />
+          <PeopleCsvButton op={reloadUsers} />
         </Box>
         <Box
           sx={{
@@ -296,7 +300,7 @@ export default function StudentList() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelClick} color="primary">
+          <Button onClick={handleConfirmDialogClose} color="primary">
             Cancel
           </Button>
           <Button

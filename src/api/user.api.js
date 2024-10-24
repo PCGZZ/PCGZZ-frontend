@@ -53,7 +53,6 @@ async function getUserRole(tok) {
 }
 
 async function deleteUser(token, id) {
-  console.log(id);
   try {
     const res = await axios.delete(`${BACKEND_API}/users/`, {
       params: {
@@ -73,4 +72,21 @@ async function deleteUser(token, id) {
   }
 }
 
-export { getAllUsers, updateUser, getUserRole, deleteUser };
+async function uploadCSV(token, file) {
+  try {
+    const res = await axios.post(`${BACKEND_API}/users/csv`, file, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    if (res.data.ok) {
+      return { ok: true };
+    }
+  } catch (error) {
+    console.error('Error Uploading Students:', error);
+    return { ok: false, error };
+  }
+}
+
+export { getAllUsers, updateUser, getUserRole, deleteUser, uploadCSV };
