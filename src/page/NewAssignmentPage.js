@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import '../styles/NewAssignment.css';
 import '../styles/assignments.css';
 import { useAuth0 } from '@auth0/auth0-react';
-import fetchAccessToken from './Auth0Authen';
+import fetchAccessToken from '../api/Authen';
 import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 
 function NewAssignmentPage({ onSave, onCancel }) {
@@ -16,7 +16,7 @@ function NewAssignmentPage({ onSave, onCancel }) {
     releaseDate: '',
     closeDate: '',
     virtualAdultName: '',
-    aiModel: 'Chat GPT 4',
+    aiModel: 'Chat GPT 4o',
     virtualAdultPhoto: null,
     scenarioFile: null,
   });
@@ -25,7 +25,11 @@ function NewAssignmentPage({ onSave, onCancel }) {
     const { name, value } = e.target;
 
     if (name === 'numOfQuestions') {
-      if ((value === '' || /^[0-9]+$/.test(value)) && value > 0) {
+      if (
+        (value === '' || /^[0-9]+$/.test(value)) &&
+        value > 0 &&
+        value < 100
+      ) {
         setAssignmentData({ ...assignmentData, [name]: value });
       }
     } else {
@@ -115,7 +119,7 @@ function NewAssignmentPage({ onSave, onCancel }) {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const requiredFields = [
       'title',
       'description',
@@ -123,19 +127,20 @@ function NewAssignmentPage({ onSave, onCancel }) {
       'releaseDate',
       'closeDate',
       'virtualAdultName',
+      'scenarioFile',
     ];
+
     const emptyFields = requiredFields.filter(
       (field) => !assignmentData[field],
     );
 
     if (emptyFields.length > 0) {
-      alert('Please fill all required fields.');
+      alert('Please fill all fields.');
       return;
     }
+    await createVAandAsmt();
 
-    createVAandAsmt();
-
-    onSave(assignmentData);
+    onSave();
   };
 
   const handleCancel = () => {

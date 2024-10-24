@@ -93,8 +93,8 @@
 }
 
 .status.not-started {
-  background-color: #EFEFEF;
-  color: #8A8A8A;
+  background-color: #efefef;
+  color: #8a8a8a;
 }
 
 .status.completed {

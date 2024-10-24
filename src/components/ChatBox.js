@@ -1,54 +1,82 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { Buffer } from 'buffer';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import SendIcon from '@mui/icons-material/Send';
 import { IconButton } from '@mui/material';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import '../styles/ChatBox.css';
 import { useAuth0 } from '@auth0/auth0-react';
-import fetchAccessToken from './Auth0Authen';
+import fetchAccessToken from '../api/Authen';
 import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import avatarKris from '../styles/image/avatar_account.jpg'; // Adjust the path
 import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
-import AISendMessage from '../api/AI.api';
+import { AISendMessage } from '../api/AI.api';
+import { createSubmission } from '../api/submission.api';
 
-function ChatBox() {
+function ChatBox({ assignmentId }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [chances, setChances] = useState(15); // Initialize with 15 chances
   const [submission, setSubmission] = useState();
   const [submissionId, setSubmissionId] = useState();
+  const [vaPhoto, setVaPhoto] = useState(avatarTeacher);
   const [isLoading, setIsLoading] = useState(true); // New loading state
   const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
-  const assignmentId = '66ed1a1aa739d9ae9c61d21c';
+  const generateUniqueId = () =>
+    `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
   // Reference for the chat message container
   const messagesEndRef = useRef(null);
-
-  // Function to fetch submission with chat history
-  const getSubmission = useCallback(async (tok) => {
-    try {
-      const res = await axios.get(
-        `${BACKEND_API}/submission?assignmentId=${assignmentId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${tok}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      if (res.data.ok) {
-        console.log('submission:', res.data.submission);
-        return res.data.submission;
-      }
-    } catch (error) {
-      console.error('Error fetching submission:', error);
-    }
-  }, []);
 
   // Scroll to the bottom of the message container
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const getVaPhoto = useCallback(
+    async (tok) => {
+      try {
+        const res1 = await axios.get(
+          `${BACKEND_API}/assignment?id=${assignmentId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${tok}`,
+              'Content-Type': 'application/json',
+            },
+          },
+        );
+        if (res1.data.ok) {
+          const vaId = res1.data.assignment.virtualAdult;
+          try {
+            const res = await axios.get(`${BACKEND_API}/va?id=${vaId}`, {
+              headers: {
+                Authorization: `Bearer ${tok}`,
+                'Content-Type': 'application/json',
+              },
+            });
+            if (res.data.ok) {
+              if (
+                res.data.va.photo &&
+                res.data.va.photo.data.type === 'Buffer'
+              ) {
+                const buffer = Buffer.from(
+                  res.data.va.photo.data.data,
+                ).toString('base64');
+                const base64Photo = `data:image/jpeg;base64,${buffer}`;
+                setVaPhoto(base64Photo);
+                console.log('Successfully get va photo');
+              }
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [assignmentId],
+  );
 
   // Fetch the token and submission details including chat history
   const fetchTokenAndSubmission = useCallback(async () => {
@@ -61,7 +89,8 @@ function ChatBox() {
       });
 
       if (token) {
-        const loadedSubmission = await getSubmission(token);
+        await getVaPhoto(token);
+        const loadedSubmission = await createSubmission(token, assignmentId);
         if (loadedSubmission) {
           setSubmission(loadedSubmission);
           setChances(loadedSubmission.numOfQuestions);
@@ -72,13 +101,11 @@ function ChatBox() {
             loadedSubmission.chatHistory &&
             loadedSubmission.chatHistory.length > 0
           ) {
-            const loadedMessages = loadedSubmission.chatHistory.map(
-              (chat, index) => ({
-                text: chat.content,
-                sender: chat.role === 'user' ? 'user' : 'bot',
-                id: index, // Generate a key using the index
-              }),
-            );
+            const loadedMessages = loadedSubmission.chatHistory.map((chat) => ({
+              text: chat.content,
+              sender: chat.role === 'user' ? 'user' : 'bot',
+              id: generateUniqueId(),
+            }));
             setMessages(loadedMessages);
           }
         }
@@ -88,7 +115,12 @@ function ChatBox() {
     } finally {
       setIsLoading(false); // End loading state when data is fetched
     }
-  }, [getAccessTokenSilently, getAccessTokenWithPopup, getSubmission]);
+  }, [
+    getAccessTokenSilently,
+    getAccessTokenWithPopup,
+    assignmentId,
+    getVaPhoto,
+  ]);
 
   // Load the chat history when the page loads
   useEffect(() => {
@@ -100,32 +132,37 @@ function ChatBox() {
     scrollToBottom();
   }, [messages]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!input || chances <= 0) return; // Prevent sending if input is empty or no chances left
     setChances(chances - 1);
 
     const newMessage = { text: input, sender: 'user' };
     setMessages([...messages, newMessage]);
 
-    fetch(`${BACKEND_API}/ai/ask`, {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        submission: submissionId, // Use the fetched submission ID
-        question: input,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        const botMessage = { text: data.response, sender: 'bot' };
-        setMessages([...messages, newMessage, botMessage]);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
+    try {
+      const token = await fetchAccessToken({
+        getAccessTokenSilently,
+        getAccessTokenWithPopup,
+        AUTH0_API_IDENTIFIER,
+        AUTH0_SCOPE,
       });
+
+      if (token) {
+        AISendMessage(
+          {
+            submission: submissionId, // Use the fetched submission ID
+            question: input,
+          },
+          (data) => {
+            const botMessage = { text: data.response, sender: 'bot' };
+            setMessages([...messages, newMessage, botMessage]);
+          },
+          token,
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching token or submission:', error);
+    }
 
     setInput('');
   };
@@ -149,7 +186,7 @@ function ChatBox() {
           <div key={msg.id} className={`chatbox-message ${msg.sender}`}>
             <img
               className="avatar"
-              src={msg.sender === 'user' ? avatarKris : avatarTeacher}
+              src={msg.sender === 'user' ? avatarKris : vaPhoto}
               alt={`${msg.sender} avatar`}
             />
             <p>{msg.text}</p>
