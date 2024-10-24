@@ -13,6 +13,7 @@ function NewAssignmentPage({ onSave, onCancel }) {
     title: '',
     description: '',
     numOfQuestions: '',
+    isVoice: false,
     releaseDate: '',
     closeDate: '',
     virtualAdultName: '',
@@ -32,6 +33,8 @@ function NewAssignmentPage({ onSave, onCancel }) {
       ) {
         setAssignmentData({ ...assignmentData, [name]: value });
       }
+    } else if (name === 'isVoice') {
+      setAssignmentData({ ...assignmentData, [name]: value === 'Verbal' });
     } else {
       setAssignmentData({ ...assignmentData, [name]: value });
     }
@@ -77,6 +80,7 @@ function NewAssignmentPage({ onSave, onCancel }) {
           title: assignmentData.title,
           description: assignmentData.description,
           numOfQuestions: assignmentData.numOfQuestions,
+          isVoice: assignmentData.isVoice,
           releaseDate: assignmentData.releaseDate,
           dueDate: assignmentData.closeDate,
           virtualAdult: vaId,
@@ -219,6 +223,18 @@ function NewAssignmentPage({ onSave, onCancel }) {
                 value={assignmentData.description}
                 onChange={handleChange}
               />
+            </div>
+
+            <div className="form-section">
+              <h3 className="section-title">Interaction Mode</h3>
+              <select
+                name="isVoice"
+                value={assignmentData?.isVoice === true ? 'Verbal' : 'Text'}
+                onChange={handleChange}
+              >
+                <option value="Text">Text</option>
+                <option value="Verbal">Verbal</option>
+              </select>
             </div>
           </div>
 

@@ -14,6 +14,7 @@ import { getUserRole } from '../api/user.api';
 import FileDownload from '../api/FileDownload';
 import StartChat from '../api/StartChat';
 import { getSubmissionList } from '../api/submission.api';
+import TranscriptModal from './TranscriptModal';
 
 function AssignmentDetail() {
   const [role, setRole] = useState(null);
@@ -45,6 +46,17 @@ function AssignmentDetail() {
     AI_model: '',
   });
   const submissions = useMemo(() => [], []);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentSubmission, setCurrentSubmission] = useState(null);
+
+  const handleViewTranscript = async (subm) => {
+    try {
+      await setCurrentSubmission(subm);
+      await setIsModalOpen(true);
+    } catch (error) {
+      console.error('Error in handleViewTranscript:', error);
+    }
+  };
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
@@ -304,7 +316,10 @@ function AssignmentDetail() {
 
   useEffect(() => {
     fetchTokenAndPerform();
-  }, [fetchTokenAndPerform]);
+    if (currentSubmission) {
+      setIsModalOpen(true);
+    }
+  }, [fetchTokenAndPerform, currentSubmission]);
 
   return (
     <>
@@ -682,9 +697,13 @@ function AssignmentDetail() {
                             <td>{subm.name}</td>
                             <td>{subm.email}</td>
                             <td>
-                              <Link to={`/transcript/${subm.id}`}>
+                              <button
+                                className="transcript-button"
+                                type="button"
+                                onClick={() => handleViewTranscript(subm)}
+                              >
                                 Click to see
-                              </Link>
+                              </button>
                             </td>
                             <td>
                               <Link to={`/transcript-summary/${subm.id}`}>
@@ -700,6 +719,13 @@ function AssignmentDetail() {
                       )}
                     </tbody>
                   </table>
+                  {isModalOpen && (
+                    <TranscriptModal
+                      isOpen={isModalOpen}
+                      onClose={() => setIsModalOpen(false)}
+                      submission={currentSubmission}
+                    />
+                  )}
                 </div>
               )}
             </>
