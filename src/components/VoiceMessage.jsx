@@ -13,6 +13,7 @@ function VoiceChatMessage(
   showText,
   setTextShow,
   i,
+  vaPhoto = avatarTeacher,
 ) {
   const waveSvg = (
     <svg
@@ -226,7 +227,7 @@ function VoiceChatMessage(
         {messageBox}
         <img
           className="avatar"
-          src={sender === 'user' ? avatarKris : avatarTeacher}
+          src={sender === 'user' ? avatarKris : vaPhoto}
           alt={`${sender} avatar`}
         />
       </>
@@ -234,7 +235,7 @@ function VoiceChatMessage(
       <>
         <img
           className="avatar"
-          src={sender === 'user' ? avatarKris : avatarTeacher}
+          src={sender === 'user' ? avatarKris : vaPhoto}
           alt={`${sender} avatar`}
         />
         {messageBox}
