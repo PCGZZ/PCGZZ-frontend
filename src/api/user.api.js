@@ -38,6 +38,20 @@ async function updateUser(token, updatedUser) {
   }
 }
 
+async function getUserRole(tok) {
+  const res = await axios.get(`${BACKEND_API}/users/get`, {
+    headers: {
+      Authorization: `Bearer ${tok}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (res.data.ok) {
+    return res.data.user.role;
+  }
+  throw new Error('Failed to fetch user role');
+}
+
 async function deleteUser(token, id) {
   console.log(id);
   try {
@@ -59,4 +73,4 @@ async function deleteUser(token, id) {
   }
 }
 
-export { getAllUsers, updateUser, deleteUser };
+export { getAllUsers, updateUser, getUserRole, deleteUser };
