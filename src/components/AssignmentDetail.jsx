@@ -4,8 +4,8 @@ import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import IconButton from '@mui/material/IconButton';
 import Sidebar from './Sidebar';
-import SearchBar from './SearchBar';
 import '../styles/NewAssignment.css';
 import '../styles/assignments.css';
 import fetchAccessToken from '../api/Authen';
@@ -50,6 +50,15 @@ function AssignmentDetail() {
   const [currentSubmission, setCurrentSubmission] = useState(null);
 
   const handleViewTranscript = async (subm) => {
+    try {
+      await setCurrentSubmission(subm);
+      await setIsModalOpen(true);
+    } catch (error) {
+      console.error('Error in handleViewTranscript:', error);
+    }
+  };
+
+  const handleViewTranscriptSummary = async (subm) => {
     try {
       await setCurrentSubmission(subm);
       await setIsModalOpen(true);
@@ -323,7 +332,6 @@ function AssignmentDetail() {
 
   return (
     <>
-      <SearchBar />
       <Sidebar />
       <div className="main-layout">
         <div className="main-content">
@@ -335,9 +343,11 @@ function AssignmentDetail() {
                 {assignmentData?.title}
                 <div className="assignment-actions">
                   {!isEditing && (
-                    <Link to="/assignments">
-                      <ArrowBackIcon sx={{ color: 'var(--darker)' }} />
-                    </Link>
+                    <IconButton className="back-arrow">
+                      <Link to="/assignments">
+                        <ArrowBackIcon sx={{ color: 'var(--darker)' }} />
+                      </Link>
+                    </IconButton>
                   )}
                   {(role === 'educator' || role === 'admin') && (
                     <>
@@ -618,10 +628,10 @@ function AssignmentDetail() {
                               />
                               <a
                                 href={originalVaData.photo}
-                                download="virtual_adult_photo.jpg"
+                                download="virtual_adult.jpg"
                                 className="download-button"
                               >
-                                Download Photo
+                                Download virtual_adult.jpg
                               </a>
                             </>
                           ) : (
@@ -700,15 +710,21 @@ function AssignmentDetail() {
                               <button
                                 className="transcript-button"
                                 type="button"
-                                onClick={() => handleViewTranscript(subm)}
+                                onClick={() =>
+                                  handleViewTranscriptSummary(subm)
+                                }
                               >
                                 Click to see
                               </button>
                             </td>
                             <td>
-                              <Link to={`/transcript-summary/${subm.id}`}>
+                              <button
+                                className="transcript-button"
+                                type="button"
+                                onClick={() => handleViewTranscript(subm)}
+                              >
                                 Click to see
-                              </Link>
+                              </button>
                             </td>
                           </tr>
                         ))

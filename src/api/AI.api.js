@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 import axios from 'axios';
+import { Buffer } from 'buffer';
+import defaultVa from '../styles/image/virtual-adult.jpg';
 import { BACKEND_API } from '../config';
 
 const AISendMessage = (body, op, token) => {
@@ -25,7 +27,9 @@ const AISendMessage = (body, op, token) => {
     });
 };
 
-const AIGetVaPhoto = async (tok, assignmentId, setVaPhoto) => {
+const AIGetVaPhoto = async (tok, assignmentId, setVaPhoto, setVaName) => {
+  setVaName('Virtual Adult');
+  setVaPhoto(defaultVa);
   const res1 = await axios.get(`${BACKEND_API}/assignment?id=${assignmentId}`, {
     headers: {
       Authorization: `Bearer ${tok}`,
@@ -47,8 +51,9 @@ const AIGetVaPhoto = async (tok, assignmentId, setVaPhoto) => {
             'base64',
           );
           const base64Photo = `data:image/jpeg;base64,${buffer}`;
+          console.log('Successfully get va photo and name');
           setVaPhoto(base64Photo);
-          console.log('Successfully get va photo');
+          setVaName(res.data.va.name);
         }
       }
     } catch (error) {

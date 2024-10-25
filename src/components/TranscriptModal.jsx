@@ -13,9 +13,19 @@ function TranscriptModal({ isOpen, onClose, submission }) {
   const [transcript, setTranscript] = useState([]);
   const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
   const [pdf, setPdf] = useState();
-  const dialogRef = useRef(null); // 引用 <dialog> 元素
+  const dialogRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   const styles = {
+    dialog: {
+      width: '60%',
+      padding: '20px',
+      borderRadius: '10px',
+      boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+      backgroundColor: '#ffffff',
+      border: 'none',
+      margin: 'auto auto',
+    },
     transcriptContent: {
       maxHeight: '400px',
       overflowY: 'auto',
@@ -24,6 +34,13 @@ function TranscriptModal({ isOpen, onClose, submission }) {
       borderRadius: '5px',
       backgroundColor: '#f9f9f9',
       marginTop: '20px',
+      marginBottom: '20px',
+    },
+    closeIcon: {
+      position: 'absolute',
+      top: '10px',
+      right: '10px',
+      cursor: 'pointer',
     },
     message: {
       margin: '10px 0',
@@ -70,10 +87,12 @@ function TranscriptModal({ isOpen, onClose, submission }) {
   useEffect(() => {
     const func = async () => {
       if (isOpen && submission) {
-        dialogRef.current?.showModal(); // 显示 <dialog>
+        dialogRef.current?.showModal();
+        await setLoading(true);
         await fetchTokenAndTranscript();
+        await setLoading(false);
       } else {
-        dialogRef.current?.close(); // 关闭 <dialog>
+        dialogRef.current?.close();
       }
     };
     func();
@@ -81,26 +100,36 @@ function TranscriptModal({ isOpen, onClose, submission }) {
 
   if (!submission) return null;
 
+  if (loading) {
+    return (
+      <dialog ref={dialogRef} style={styles.dialog}>
+        <h2 className="sub-heading">Loading Transcript...</h2>
+      </dialog>
+    );
+  }
+
   return (
-    <dialog ref={dialogRef}>
+    <dialog ref={dialogRef} style={styles.dialog}>
       <h2 className="sub-heading">
         {submission.name} Transcript Preview
         <div className="assignment-actions">
-          <IconButton color="rgba(96, 209, 196, 1)">
-            <CloseIcon onClick={() => dialogRef.current.close()} />
+          <IconButton
+            style={styles.closeIcon}
+            color="rgba(96, 209, 196, 1)"
+            onClick={() => dialogRef.current.close()}
+          >
+            <CloseIcon />
           </IconButton>
         </div>
       </h2>
       <div style={styles.transcriptContent}>
-        {transcript.length > 0 ? (
-          transcript.map((message) => (
-            <p key={`${message.role}-${message.content}-${Math.random()}`}>
-              <strong>{message.role}:</strong> {message.content}
-            </p>
-          ))
-        ) : (
-          <p>No transcript available.</p>
-        )}
+        {!loading && transcript.length > 0
+          ? transcript.map((message) => (
+              <p key={`${message.role}-${message.content}-${Math.random()}`}>
+                <strong>{message.role}:</strong> {message.content}
+              </p>
+            ))
+          : !loading && <p>No transcript available.</p>}
       </div>
       {pdf && (
         <FileDownload

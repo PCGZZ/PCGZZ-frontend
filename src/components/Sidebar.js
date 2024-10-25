@@ -5,6 +5,7 @@ import '../styles/sidebar.css';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import Face2Icon from '@mui/icons-material/Face2';
 import LogoutIcon from '@mui/icons-material/Logout';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 
 function Sidebar() {
   const location = useLocation();
@@ -23,7 +24,7 @@ function Sidebar() {
       <div className="sidebar">
         <div className="logo-design">
           <Face2Icon sx={{ mr: 2 }} />
-          Virtual Adults.
+          Virtual Adult
         </div>
         <div className="sidebar-links">
           <Link
@@ -46,21 +47,11 @@ function Sidebar() {
           </Link>
 
           <Link
-            to="/voice-adult"
-            className={`sidebar-link ${location.pathname === '/voice-adult' ? 'active' : 'inactive'}`}
-          >
-            <div className="sidebar-link-icon">
-              <Face2Icon sx={{ mr: 2 }} />
-            </div>
-            <div className="sidebar-link-text-white">Voice Test</div>
-          </Link>
-
-          <Link
             to="/user-list"
             className={`sidebar-link ${location.pathname === '/user-list' ? 'active' : 'inactive'}`}
           >
             <div className="sidebar-link-icon">
-              <Face2Icon sx={{ mr: 2 }} />
+              <PeopleAltIcon sx={{ mr: 2 }} />
             </div>
             <div className="sidebar-link-text-white">Students</div>
           </Link>

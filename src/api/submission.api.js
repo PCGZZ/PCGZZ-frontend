@@ -16,7 +16,7 @@ const createSubmission = async (token, asmtId) => {
       },
     );
     if (res.data.ok) {
-      console.log('submission:', res.data.ok);
+      console.log('submission fetched');
       return res.data.submission;
     }
   } catch (error) {
@@ -39,7 +39,7 @@ const getSubmissions = async (
       },
     );
     if (res.data.ok) {
-      console.log('submission:', res.data.submission);
+      console.log('submission:');
       return res.data.submission;
     }
   } catch (error) {
@@ -59,7 +59,7 @@ const getSubmissionList = async (token, assignmentId) => {
       },
     );
     if (res.data.ok) {
-      console.log('submission list:', res.data.submissions);
+      console.log('submission list fetched');
       return res.data.submissions;
     }
   } catch (error) {

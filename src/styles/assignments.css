@@ -14,6 +14,12 @@
   margin-bottom: 20px;
 }
 
+.back-arrow {
+  position: absolute;
+  cursor: pointer;
+  align-items: center;
+}
+
 /* Updated Button Styles */
 .new-assignment-button,
 .edit-button {
@@ -53,6 +59,39 @@
 .new-assignment-button:hover,
 .edit-button:hover {
   background-color: #4bb7a8;
+}
+
+.asmt-button {
+  background-color: var(--white);
+  color: var(--text);
+  font-weight: bold;
+  font-size: 15px;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.transcript-button {
+  background-color: var(--white);
+  color: var(--text);
+  padding: 7px 10px;
+  border: none;
+  font-size: medium;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.transcript-button:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: var(--white);
+  background-color: #25d0b9a2;
+}
+
+.asmt-button:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: var(--white);
+  background-color: var(--darker);
 }
 
 /* Table Styling */

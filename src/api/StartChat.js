@@ -3,19 +3,25 @@ import { Link } from 'react-router-dom';
 import '../styles/ChatBox.css';
 
 function StartChat({ assignmentId, isVoiceMode }) {
-  return (
-    <div className="StartChat-input-container">
-      {!isVoiceMode ? (
-        <Link to={`/virtual-adult/${assignmentId}`}>
+  if (!isVoiceMode) {
+    return (
+      <Link to={`/virtual-adult/${assignmentId}`}>
+        <div className="StartChat-input-container">
           <p className="inbox-text">Chat with your virtual patient now!</p>
-        </Link>
-      ) : (
-        <Link to={`/voice-adult/${assignmentId}`}>
+        </div>
+      </Link>
+    );
+  }
+
+  if (isVoiceMode) {
+    return (
+      <Link to={`/voice-adult/${assignmentId}`}>
+        <div className="StartChat-input-container">
           <p className="inbox-text">Chat with your virtual patient now!</p>
-        </Link>
-      )}
-    </div>
-  );
+        </div>
+      </Link>
+    );
+  }
 }
 
 export default StartChat;
