@@ -16,8 +16,7 @@ const fetchAccessToken = async ({
     });
     // console.log('Access Token silently');
   } catch (error) {
-    // console.error('Failed to get token silently');
-    console.error(error);
+    console.error('Failed to get token silently', error);
     // if failed, try getAccessTokenWithPopup. This method should work at localhost env
     try {
       token = await getAccessTokenWithPopup({

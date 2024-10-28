@@ -4,7 +4,7 @@ import { withAuthenticationRequired } from '@auth0/auth0-react';
 import { SnackbarProvider } from 'notistack';
 import Sidebar from './components/Sidebar';
 import Login from './page/Login';
-import AssignmentDetail from './components/AssignmentDetail';
+import AssignmentDetail from './page/AssignmentDetailPage';
 import VirtualAdultPage from './page/VirtualAdultPage';
 import AssignmentsPage from './page/AssignmentsPage';
 import VoiceVirtualAdultPage from './page/VoiceVirtualAdultPage';

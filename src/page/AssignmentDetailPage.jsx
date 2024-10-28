@@ -5,16 +5,16 @@ import { useParams, Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import IconButton from '@mui/material/IconButton';
-import Sidebar from './Sidebar';
+import Sidebar from '../components/Sidebar';
 import '../styles/NewAssignment.css';
 import '../styles/assignments.css';
 import fetchAccessToken from '../api/Authen';
 import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import { getUserRole } from '../api/user.api';
-import FileDownload from '../api/FileDownload';
-import StartChat from '../api/StartChat';
+import FileDownload from '../components/FileDownload';
+import StartChat from '../components/StartChat';
 import { getSubmissionList } from '../api/submission.api';
-import TranscriptModal from './TranscriptModal';
+import TranscriptModal from '../components/TranscriptModal';
 
 function AssignmentDetail() {
   const [role, setRole] = useState(null);

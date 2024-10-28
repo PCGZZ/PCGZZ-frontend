@@ -7,7 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import { AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import fetchAccessToken from '../api/Authen';
 import { getTranscript, downloadTranscript } from '../api/transcript.api';
-import FileDownload from '../api/FileDownload';
+import FileDownload from './FileDownload';
 
 function TranscriptModal({ isOpen, onClose, submission }) {
   const [transcript, setTranscript] = useState([]);
@@ -64,11 +64,10 @@ function TranscriptModal({ isOpen, onClose, submission }) {
       });
 
       if (token) {
-        console.log('Access Token');
         const trans = await getTranscript(token, submission.id);
         const pdfData = await downloadTranscript(token, submission.id);
         if (trans) {
-          setTranscript(trans);
+          await setTranscript(trans);
         }
         if (pdfData) {
           const data = {
@@ -76,7 +75,7 @@ function TranscriptModal({ isOpen, onClose, submission }) {
             contentType: 'application/pdf',
             filename: `${submission.name}-transcript.pdf`,
           };
-          setPdf(data);
+          await setPdf(data);
         }
       }
     } catch (error) {

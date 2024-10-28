@@ -13,6 +13,7 @@ const getTranscript = async (token, submissionId) => {
       },
     );
     if (res.data.ok) {
+      console.log('Successfully fetch transcript');
       return res.data.transcript;
     }
   } catch (error) {
@@ -32,6 +33,7 @@ const downloadTranscript = async (token, submissionId) => {
       },
     );
     if (res.data.ok) {
+      console.log('Successfully fetch transcript pdf');
       return res.data.transcript;
     }
   } catch (error) {
