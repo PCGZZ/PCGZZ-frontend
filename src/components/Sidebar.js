@@ -36,15 +36,6 @@ function Sidebar() {
             </div>
             <div className="sidebar-link-text-white">Assignment</div>
           </Link>
-          <Link
-            to="/virtual-adult"
-            className={`sidebar-link ${location.pathname === '/virtual-adult' ? 'active' : 'inactive'}`}
-          >
-            <div className="sidebar-link-icon">
-              <Face2Icon sx={{ mr: 2 }} />
-            </div>
-            <div className="sidebar-link-text-white">Virtual Adult</div>
-          </Link>
 
           <Link
             to="/user-list"
