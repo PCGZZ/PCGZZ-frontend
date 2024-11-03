@@ -1,19 +1,20 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
-import ChatBox from '../components/ChatBox';
-import '../styles/App.css';
 
-function VirtualAdultPage() {
+import '../styles/App.css';
+import VoiceChatBox from '../components/VoiceChatBox';
+
+function VoiceVirtualAdultPage() {
   const { assignmentId } = useParams();
   return (
     <>
       <Sidebar />
       <div className="main-layout">
-        <ChatBox assignmentId={assignmentId} />
+        <VoiceChatBox assignmentId={assignmentId} />
       </div>
     </>
   );
 }
 
-export default VirtualAdultPage;
+export default VoiceVirtualAdultPage;

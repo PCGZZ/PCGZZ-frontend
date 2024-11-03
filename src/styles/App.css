@@ -39,7 +39,7 @@
 
 /* Main Content Styles */
 .main-content {
-  margin-top: 102.9px; /* Adjust to leave space for the header */
+  margin-top: 40px;
   padding: 40px;
   background-color: var(--white);
 }

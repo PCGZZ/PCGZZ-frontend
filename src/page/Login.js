@@ -4,7 +4,7 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
 import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import '../styles/Login.css';
-import fetchAccessToken from './Auth0Authen';
+import fetchAccessToken from '../api/Authen';
 import deakinLogo from '../styles/image/deakin-university.png';
 
 function Login() {
@@ -14,52 +14,31 @@ function Login() {
     isLoading,
     getAccessTokenSilently,
     getAccessTokenWithPopup,
+    logout,
   } = useAuth0();
   const navigate = useNavigate();
 
   // call api to login in DB
   const loginDB = useCallback(async (tok) => {
-    await axios.post(
-      `${BACKEND_API}/users/loglogin`,
-      {}, // no request body needed
-      {
-        headers: {
-          Authorization: `Bearer ${tok}`,
-          'Content-Type': 'application/json',
+    try {
+      await axios.post(
+        `${BACKEND_API}/users/loglogin`,
+        {}, // no request body needed
+        {
+          headers: {
+            Authorization: `Bearer ${tok}`,
+            'Content-Type': 'application/json',
+          },
         },
-      },
-    );
-  }, []);
-
-  // getUserRole function: gets the user role from the backend
-  const getUserRole = useCallback(async (tok) => {
-    const res = await axios.get(`${BACKEND_API}/users/get`, {
-      headers: {
-        Authorization: `Bearer ${tok}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (res.data.ok) {
-      return res.data.user.role;
+      );
+      return true;
+    } catch (error) {
+      alert(
+        "You don't have permission to use this website, ask admin for permission",
+      );
+      return false;
     }
-    throw new Error('Failed to fetch user role');
   }, []);
-
-  // handleTokenOperations: logs the user and gets the role
-  const handleTokenOperations = useCallback(
-    async (tok) => {
-      try {
-        await loginDB(tok);
-        const role = await getUserRole(tok);
-        console.log('Role:', role);
-        return role;
-      } catch (error) {
-        console.error('Error in handling token:', error);
-      }
-    },
-    [getUserRole, loginDB],
-  );
 
   // fetchAndHandleToken: fetches the token from auth0 and handles it
   const fetchAndHandleToken = useCallback(async () => {
@@ -72,34 +51,37 @@ function Login() {
       });
 
       if (token) {
-        const role = await handleTokenOperations(token);
-        return role;
+        const login = await loginDB(token);
+        if (login) {
+          navigate('/assignments');
+        } else {
+          logout({
+            logoutParams: {
+              returnTo: window.location.origin, // Redirect to the deployment path
+            },
+          });
+        }
+        return;
       }
       console.error('No token available after all attempts.');
       alert('Please turn off popup blocking settings and start again');
     } catch (error) {
       console.error('Error fetching and handling token:', error);
     }
-  }, [getAccessTokenSilently, getAccessTokenWithPopup, handleTokenOperations]);
+  }, [
+    getAccessTokenSilently,
+    getAccessTokenWithPopup,
+    loginDB,
+    navigate,
+    logout,
+  ]);
 
   // useEffect: fetch token and navigate based on the role
   useEffect(() => {
     if (isAuthenticated) {
-      fetchAndHandleToken()
-        .then((role) => {
-          if (role === 'educator') {
-            navigate('/teacher-assignments');
-          } else if (role === 'student') {
-            navigate('/assignments');
-          } else {
-            console.error('Unknown role:', role);
-          }
-        })
-        .catch((error) => {
-          console.error('Error navigating based on role:', error);
-        });
+      fetchAndHandleToken();
     }
-  }, [navigate, isAuthenticated, fetchAndHandleToken]);
+  }, [isAuthenticated, fetchAndHandleToken]);
 
   if (isLoading) {
     return <div>Loading...</div>;

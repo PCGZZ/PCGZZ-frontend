@@ -13,6 +13,7 @@ function VoiceChatMessage(
   showText,
   setTextShow,
   i,
+  vaPhoto = avatarTeacher,
 ) {
   const waveSvg = (
     <svg
@@ -189,7 +190,7 @@ function VoiceChatMessage(
     // console.log('toggleText');
     // eslint-disable-next-line
     console.log(showText);
-    const newTextShow = showText;
+    const newTextShow = [...showText];
     newTextShow[i] = !newTextShow[i];
     setTextShow(newTextShow);
   };
@@ -226,7 +227,7 @@ function VoiceChatMessage(
         {messageBox}
         <img
           className="avatar"
-          src={sender === 'user' ? avatarKris : avatarTeacher}
+          src={sender === 'user' ? avatarKris : vaPhoto}
           alt={`${sender} avatar`}
         />
       </>
@@ -234,7 +235,7 @@ function VoiceChatMessage(
       <>
         <img
           className="avatar"
-          src={sender === 'user' ? avatarKris : avatarTeacher}
+          src={sender === 'user' ? avatarKris : vaPhoto}
           alt={`${sender} avatar`}
         />
         {messageBox}
@@ -243,10 +244,10 @@ function VoiceChatMessage(
 
   if (showText[i]) {
     return (
-      <div key={id} style={{ alignItems: 'right' }}>
+      <div key={id}>
         <div className={`vcb-message ${sender}`}>{orderedChat}</div>
 
-        <div style={{ paddingBottom: '15px' }}>
+        <div style={{ paddingBottom: '15px', paddingLeft: '10%' }}>
           <div className="vmessage-textbox" style={{ background: colorBoxBg }}>
             <p>{text}</p>
           </div>

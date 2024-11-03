@@ -1,53 +1,28 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { withAuthenticationRequired } from '@auth0/auth0-react';
+import { SnackbarProvider } from 'notistack';
 import Sidebar from './components/Sidebar';
-import SearchBar from './components/SearchBar';
-import ChatBox from './components/ChatBox';
-import Assignments from './components/Assignments';
-import AssignmentTeacherPage from './components/AssignmentTeacherPage';
-import Login from './components/Login';
-import TeacherLogin from './components/TeacherLogin';
-import AssignmentList from './components/AssignmentList';
-import { AssignmentsProvider } from './context/AssignmentsContext'; // Import AssignmentsProvider
-import VoiceChatBox from './components/VoiceChatBox';
+import Login from './page/Login';
+import AssignmentDetail from './page/AssignmentDetailPage';
+import VirtualAdultPage from './page/VirtualAdultPage';
+import AssignmentsPage from './page/AssignmentsPage';
+import VoiceVirtualAdultPage from './page/VoiceVirtualAdultPage';
 import './styles/App.css';
-import NewAssignmentPage from './components/NewAssignmentPage'; // Import the NewAssignmentPage component
+import StudentList from './components/StudentsList';
+import { UserProvider } from './context/UserContext';
 
 function ProtectedRoute({ component, ...args }) {
   const Component = withAuthenticationRequired(component, args);
   return <Component />;
 }
 
-function VirtualAdultPage() {
+function StudentListPage() {
   return (
     <>
       <Sidebar />
       <div className="main-layout">
-        <ChatBox />
-      </div>
-    </>
-  );
-}
-
-function AssignmentsPage() {
-  return (
-    <>
-      <SearchBar />
-      <Sidebar />
-      <div className="main-layout">
-        <Assignments />
-      </div>
-    </>
-  );
-}
-
-function VoiceAdultPage() {
-  return (
-    <>
-      <Sidebar />
-      <div className="main-layout">
-        <VoiceChatBox />
+        <StudentList />
       </div>
     </>
   );
@@ -56,12 +31,13 @@ function VoiceAdultPage() {
 function App() {
   return (
     <Router>
-      <AssignmentsProvider>
+      <SnackbarProvider autoHideDuration={5000} />
+      <UserProvider>
         <div className="App">
           <Routes>
             <Route path="/" element={<Login />} />
             <Route
-              path="/virtual-adult"
+              path="/virtual-adult/:assignmentId"
               element={<ProtectedRoute component={VirtualAdultPage} />}
             />
             <Route
@@ -69,29 +45,21 @@ function App() {
               element={<ProtectedRoute component={AssignmentsPage} />}
             />
             <Route
-              path="/teacher-login"
-              element={<ProtectedRoute component={TeacherLogin} />}
+              path="/assignment-detail/:id"
+              element={<ProtectedRoute component={AssignmentDetail} />}
             />
             <Route
-              path="/teacher-assignments"
-              element={<ProtectedRoute component={AssignmentTeacherPage} />}
-            />
-            {/* Add the route for NewAssignmentPage */}
-            <Route
-              path="/new-assignment"
-              element={<ProtectedRoute component={NewAssignmentPage} />}
+              path="/voice-adult/:assignmentId"
+              element={<ProtectedRoute component={VoiceVirtualAdultPage} />}
             />
             <Route
-              path="/assignment-detail/:assignmentId"
-              element={<ProtectedRoute component={AssignmentList} />}
+              path="/user-list"
+              element={<ProtectedRoute component={StudentListPage} />}
             />
-            <Route
-              path="/voice-adult"
-              element={<ProtectedRoute component={VoiceAdultPage} />}
-            />
+            <Route path="*" element={<h1>Not Found</h1>} />
           </Routes>
         </div>
-      </AssignmentsProvider>
+      </UserProvider>
     </Router>
   );
 }

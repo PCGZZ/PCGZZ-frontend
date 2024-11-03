@@ -6,9 +6,104 @@
   margin-bottom: 30px;
 }
 
+/* Buttons for actions */
+.assignment-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.back-arrow {
+  position: absolute;
+  cursor: pointer;
+  align-items: center;
+}
+
+/* Updated Button Styles */
+.new-assignment-button,
+.edit-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 20px;
+  width: fit-content;
+  height: fit-content;
+  background-color: var(--main);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.delete-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 20px;
+  width: fit-content;
+  height: fit-content;
+  background-color: rgba(255, 0, 0, 0.676);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background-color: rgba(240, 1, 1, 0.884);
+}
+
+.new-assignment-button:hover,
+.edit-button:hover {
+  background-color: #4bb7a8;
+}
+
+.asmt-button {
+  background-color: var(--white);
+  color: var(--text);
+  font-weight: bold;
+  font-size: 15px;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.transcript-button {
+  background-color: var(--white);
+  color: var(--text);
+  padding: 7px 10px;
+  border: none;
+  font-size: medium;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.transcript-button:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: var(--white);
+  background-color: #25d0b9a2;
+}
+
+.asmt-button:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: var(--white);
+  background-color: var(--darker);
+}
+
+/* Table Styling */
 .assignments-table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 20px;
+  margin-left: auto; /* Pushes table to the right */
+  margin-right: 20px; /* Spacing on the right */
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .assignments-table th,
@@ -19,7 +114,12 @@
 }
 
 .assignments-table th {
-  background-color: var(--white);
+  background-color: #f9f9f9;
+  font-weight: 600;
+}
+
+.assignments-table td {
+  background-color: #fff;
 }
 
 /* Status Styles */
@@ -32,8 +132,8 @@
 }
 
 .status.not-started {
-  background-color: #EFEFEF;
-  color: #8A8A8A;
+  background-color: #efefef;
+  color: #8a8a8a;
 }
 
 .status.completed {
