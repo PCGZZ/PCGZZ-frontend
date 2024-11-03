@@ -105,6 +105,7 @@ export default function StudentList() {
         name: user.name,
         email: user.email,
         role: user.role,
+        student_id: user.student_id,
         user,
         // createdAt: user.createdAt,
       }));
@@ -168,8 +169,8 @@ export default function StudentList() {
   };
   // DataGrid columns to show
   const columns = [
-    { field: 'count', headerName: '#', width: 50 },
-    { field: 'name', headerName: 'Name', width: 150 },
+    { field: 'student_id', headerName: 'Student ID', width: 100 },
+    { field: 'name', headerName: 'Name', width: 150, editable: true },
     { field: 'email', headerName: 'Email', width: 250 },
     {
       field: 'role',
