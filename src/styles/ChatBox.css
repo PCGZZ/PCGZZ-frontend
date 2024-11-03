@@ -111,12 +111,17 @@
   margin: 20px 0;
 }
 
+.StartChat-input-container:hover {
+  background-color: rgba(143, 222, 228, 0.535);
+}
+
 .inbox-text {
   color: #1b6d87;
   font-weight: bold;
   font-family: var(--main);
   font-size: 20px;
   margin: 0;
+  text-decoration: underline;
 }
 
 .StartChat-input-container a {

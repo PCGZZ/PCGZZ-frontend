@@ -4,16 +4,17 @@ import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import Sidebar from './Sidebar';
-import SearchBar from './SearchBar';
+import IconButton from '@mui/material/IconButton';
+import Sidebar from '../components/Sidebar';
 import '../styles/NewAssignment.css';
 import '../styles/assignments.css';
 import fetchAccessToken from '../api/Authen';
 import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import { getUserRole } from '../api/user.api';
-import FileDownload from '../api/FileDownload';
-import StartChat from '../api/StartChat';
+import FileDownload from '../components/FileDownload';
+import StartChat from '../components/StartChat';
 import { getSubmissionList } from '../api/submission.api';
+import TranscriptModal from '../components/TranscriptModal';
 
 function AssignmentDetail() {
   const [role, setRole] = useState(null);
@@ -45,6 +46,26 @@ function AssignmentDetail() {
     AI_model: '',
   });
   const submissions = useMemo(() => [], []);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentSubmission, setCurrentSubmission] = useState(null);
+
+  const handleViewTranscript = async (subm) => {
+    try {
+      await setCurrentSubmission(subm);
+      await setIsModalOpen(true);
+    } catch (error) {
+      console.error('Error in handleViewTranscript:', error);
+    }
+  };
+
+  const handleViewTranscriptSummary = async (subm) => {
+    try {
+      await setCurrentSubmission(subm);
+      await setIsModalOpen(true);
+    } catch (error) {
+      console.error('Error in handleViewTranscript:', error);
+    }
+  };
 
   const handleEdit = () => {
     setIsEditing(!isEditing);
@@ -304,11 +325,13 @@ function AssignmentDetail() {
 
   useEffect(() => {
     fetchTokenAndPerform();
-  }, [fetchTokenAndPerform]);
+    if (currentSubmission) {
+      setIsModalOpen(true);
+    }
+  }, [fetchTokenAndPerform, currentSubmission]);
 
   return (
     <>
-      <SearchBar />
       <Sidebar />
       <div className="main-layout">
         <div className="main-content">
@@ -320,9 +343,11 @@ function AssignmentDetail() {
                 {assignmentData?.title}
                 <div className="assignment-actions">
                   {!isEditing && (
-                    <Link to="/assignments">
-                      <ArrowBackIcon sx={{ color: 'var(--darker)' }} />
-                    </Link>
+                    <IconButton className="back-arrow">
+                      <Link to="/assignments">
+                        <ArrowBackIcon sx={{ color: 'var(--darker)' }} />
+                      </Link>
+                    </IconButton>
                   )}
                   {(role === 'educator' || role === 'admin') && (
                     <>
@@ -603,10 +628,10 @@ function AssignmentDetail() {
                               />
                               <a
                                 href={originalVaData.photo}
-                                download="virtual_adult_photo.jpg"
+                                download="virtual_adult.jpg"
                                 className="download-button"
                               >
-                                Download Photo
+                                Download virtual_adult.jpg
                               </a>
                             </>
                           ) : (
@@ -682,14 +707,24 @@ function AssignmentDetail() {
                             <td>{subm.name}</td>
                             <td>{subm.email}</td>
                             <td>
-                              <Link to={`/transcript/${subm.id}`}>
+                              <button
+                                className="transcript-button"
+                                type="button"
+                                onClick={() =>
+                                  handleViewTranscriptSummary(subm)
+                                }
+                              >
                                 Click to see
-                              </Link>
+                              </button>
                             </td>
                             <td>
-                              <Link to={`/transcript-summary/${subm.id}`}>
+                              <button
+                                className="transcript-button"
+                                type="button"
+                                onClick={() => handleViewTranscript(subm)}
+                              >
                                 Click to see
-                              </Link>
+                              </button>
                             </td>
                           </tr>
                         ))
@@ -700,6 +735,13 @@ function AssignmentDetail() {
                       )}
                     </tbody>
                   </table>
+                  {isModalOpen && (
+                    <TranscriptModal
+                      isOpen={isModalOpen}
+                      onClose={() => setIsModalOpen(false)}
+                      submission={currentSubmission}
+                    />
+                  )}
                 </div>
               )}
             </>

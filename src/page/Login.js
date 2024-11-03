@@ -14,21 +14,30 @@ function Login() {
     isLoading,
     getAccessTokenSilently,
     getAccessTokenWithPopup,
+    logout,
   } = useAuth0();
   const navigate = useNavigate();
 
   // call api to login in DB
   const loginDB = useCallback(async (tok) => {
-    await axios.post(
-      `${BACKEND_API}/users/loglogin`,
-      {}, // no request body needed
-      {
-        headers: {
-          Authorization: `Bearer ${tok}`,
-          'Content-Type': 'application/json',
+    try {
+      await axios.post(
+        `${BACKEND_API}/users/loglogin`,
+        {}, // no request body needed
+        {
+          headers: {
+            Authorization: `Bearer ${tok}`,
+            'Content-Type': 'application/json',
+          },
         },
-      },
-    );
+      );
+      return true;
+    } catch (error) {
+      alert(
+        "You don't have permission to use this website, ask admin for permission",
+      );
+      return false;
+    }
   }, []);
 
   // fetchAndHandleToken: fetches the token from auth0 and handles it
@@ -42,27 +51,37 @@ function Login() {
       });
 
       if (token) {
-        try {
-          await loginDB(token);
-          return;
-        } catch (error) {
-          console.error('Error in login DB:', error);
+        const login = await loginDB(token);
+        if (login) {
+          navigate('/assignments');
+        } else {
+          logout({
+            logoutParams: {
+              returnTo: window.location.origin, // Redirect to the deployment path
+            },
+          });
         }
+        return;
       }
       console.error('No token available after all attempts.');
       alert('Please turn off popup blocking settings and start again');
     } catch (error) {
       console.error('Error fetching and handling token:', error);
     }
-  }, [getAccessTokenSilently, getAccessTokenWithPopup, loginDB]);
+  }, [
+    getAccessTokenSilently,
+    getAccessTokenWithPopup,
+    loginDB,
+    navigate,
+    logout,
+  ]);
 
   // useEffect: fetch token and navigate based on the role
   useEffect(() => {
     if (isAuthenticated) {
       fetchAndHandleToken();
-      navigate('/assignments');
     }
-  }, [navigate, isAuthenticated, fetchAndHandleToken]);
+  }, [isAuthenticated, fetchAndHandleToken]);
 
   if (isLoading) {
     return <div>Loading...</div>;

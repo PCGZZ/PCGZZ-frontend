@@ -1,16 +1,14 @@
-import axios from 'axios';
-import { Buffer } from 'buffer';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import SendIcon from '@mui/icons-material/Send';
+import { Link } from 'react-router-dom';
 import { IconButton } from '@mui/material';
-import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
+import CloseIcon from '@mui/icons-material/Close';
 import '../styles/ChatBox.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import fetchAccessToken from '../api/Authen';
-import { BACKEND_API, AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
+import { AUTH0_API_IDENTIFIER, AUTH0_SCOPE } from '../config';
 import avatarKris from '../styles/image/avatar_account.jpg'; // Adjust the path
-import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
-import { AISendMessage } from '../api/AI.api';
+import { AISendMessage, AIGetVaPhoto } from '../api/AI.api';
 import { createSubmission } from '../api/submission.api';
 
 function ChatBox({ assignmentId }) {
@@ -19,7 +17,8 @@ function ChatBox({ assignmentId }) {
   const [chances, setChances] = useState(15); // Initialize with 15 chances
   const [submission, setSubmission] = useState();
   const [submissionId, setSubmissionId] = useState();
-  const [vaPhoto, setVaPhoto] = useState(avatarTeacher);
+  const [vaPhoto, setVaPhoto] = useState();
+  const [vaName, setVaName] = useState();
   const [isLoading, setIsLoading] = useState(true); // New loading state
   const { getAccessTokenSilently, getAccessTokenWithPopup } = useAuth0();
   const generateUniqueId = () =>
@@ -33,51 +32,6 @@ function ChatBox({ assignmentId }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const getVaPhoto = useCallback(
-    async (tok) => {
-      try {
-        const res1 = await axios.get(
-          `${BACKEND_API}/assignment?id=${assignmentId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${tok}`,
-              'Content-Type': 'application/json',
-            },
-          },
-        );
-        if (res1.data.ok) {
-          const vaId = res1.data.assignment.virtualAdult;
-          try {
-            const res = await axios.get(`${BACKEND_API}/va?id=${vaId}`, {
-              headers: {
-                Authorization: `Bearer ${tok}`,
-                'Content-Type': 'application/json',
-              },
-            });
-            if (res.data.ok) {
-              if (
-                res.data.va.photo &&
-                res.data.va.photo.data.type === 'Buffer'
-              ) {
-                const buffer = Buffer.from(
-                  res.data.va.photo.data.data,
-                ).toString('base64');
-                const base64Photo = `data:image/jpeg;base64,${buffer}`;
-                setVaPhoto(base64Photo);
-                console.log('Successfully get va photo');
-              }
-            }
-          } catch (error) {
-            console.error(error);
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [assignmentId],
-  );
-
   // Fetch the token and submission details including chat history
   const fetchTokenAndSubmission = useCallback(async () => {
     try {
@@ -89,7 +43,7 @@ function ChatBox({ assignmentId }) {
       });
 
       if (token) {
-        await getVaPhoto(token);
+        await AIGetVaPhoto(token, assignmentId, setVaPhoto, setVaName);
         const loadedSubmission = await createSubmission(token, assignmentId);
         if (loadedSubmission) {
           setSubmission(loadedSubmission);
@@ -115,12 +69,7 @@ function ChatBox({ assignmentId }) {
     } finally {
       setIsLoading(false); // End loading state when data is fetched
     }
-  }, [
-    getAccessTokenSilently,
-    getAccessTokenWithPopup,
-    assignmentId,
-    getVaPhoto,
-  ]);
+  }, [getAccessTokenSilently, getAccessTokenWithPopup, assignmentId]);
 
   // Load the chat history when the page loads
   useEffect(() => {
@@ -178,7 +127,12 @@ function ChatBox({ assignmentId }) {
           You have <strong>{chances}</strong>{' '}
           {chances === 1 ? 'chance ' : 'chances '}
           to talk to
-          <strong> Dr Zhou</strong>
+          <strong> {vaName}</strong>
+          <IconButton>
+            <Link to={`/assignment-detail/${assignmentId}`}>
+              <CloseIcon sx={{ color: 'var(--darker)' }} />
+            </Link>
+          </IconButton>
         </span>
       </div>
       <div className="chatbox-messages">
@@ -196,7 +150,6 @@ function ChatBox({ assignmentId }) {
         <div ref={messagesEndRef} />
       </div>
       <div className="chatbox-input-container">
-        <KeyboardVoiceIcon sx={{ color: 'var(--darker)' }} />
         <input
           type="text"
           placeholder="Ask anything..."

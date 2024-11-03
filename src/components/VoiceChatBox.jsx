@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 // import SendIcon from '@mui/icons-material/Send';
 import { IconButton } from '@mui/material';
+import { Link } from 'react-router-dom';
+import CloseIcon from '@mui/icons-material/Close';
 import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import StopIcon from '@mui/icons-material/Stop';
 // import ClearIcon from '@mui/icons-material/Clear';
@@ -12,7 +14,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CircleRoundedIcon from '@mui/icons-material/CircleRounded';
 import { v4 } from 'uuid';
 import { enqueueSnackbar } from 'notistack';
-import avatarTeacher from '../styles/image/virtual-adult.jpg'; // Import the teacher's avatar
 import { AISendMessage, AIGetVaPhoto } from '../api/AI.api';
 import VoiceChatMessage from './VoiceMessage';
 // import InputBar from './voiceModule/InputBar';
@@ -174,7 +175,8 @@ function VoiceChatBox({ assignmentId }) {
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [voiceError, setVoiceError] = useState('');
-  const [vaPhoto, setVaPhoto] = useState(avatarTeacher);
+  const [vaPhoto, setVaPhoto] = useState();
+  const [vaName, setVaName] = useState();
 
   // const [submission, setSubmission] = useState();
   // const [submissionId, setSubmissionId] = useState();
@@ -225,7 +227,7 @@ function VoiceChatBox({ assignmentId }) {
   const getVaPhoto = useCallback(
     async (tok) => {
       try {
-        await AIGetVaPhoto(tok, assignmentId, setVaPhoto);
+        await AIGetVaPhoto(tok, assignmentId, setVaPhoto, setVaName);
       } catch (error) {
         console.error(error);
       }
@@ -451,8 +453,13 @@ function VoiceChatBox({ assignmentId }) {
           VOICE:You have <strong>{chances}</strong>{' '}
           {chances === 1 ? 'chance ' : 'chances '}
           to talk to
-          <strong> Dr Zhou</strong>
+          <strong> {vaName}</strong>
         </span>
+        <IconButton>
+          <Link to={`/assignment-detail/${assignmentId}`}>
+            <CloseIcon sx={{ color: 'var(--darker)' }} />
+          </Link>
+        </IconButton>
       </div>
       {isLoading && <div>Loading...</div>}
       <div className="vcb-messages">

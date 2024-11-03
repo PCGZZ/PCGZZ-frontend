@@ -4,10 +4,9 @@ import { withAuthenticationRequired } from '@auth0/auth0-react';
 import { SnackbarProvider } from 'notistack';
 import Sidebar from './components/Sidebar';
 import Login from './page/Login';
-import AssignmentDetail from './components/AssignmentDetail';
+import AssignmentDetail from './page/AssignmentDetailPage';
 import VirtualAdultPage from './page/VirtualAdultPage';
 import AssignmentsPage from './page/AssignmentsPage';
-import TranscriptPage from './page/TranscriptPage';
 import VoiceVirtualAdultPage from './page/VoiceVirtualAdultPage';
 import './styles/App.css';
 import StudentList from './components/StudentsList';
@@ -48,10 +47,6 @@ function App() {
             <Route
               path="/assignment-detail/:id"
               element={<ProtectedRoute component={AssignmentDetail} />}
-            />
-            <Route
-              path="/transcript/:submissionId"
-              element={<ProtectedRoute component={TranscriptPage} />}
             />
             <Route
               path="/voice-adult/:assignmentId"

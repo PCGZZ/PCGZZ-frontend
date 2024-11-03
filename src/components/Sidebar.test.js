@@ -30,9 +30,8 @@ describe('Sidebar Component', () => {
     );
 
     // Check if sidebar elements are rendered
-    expect(screen.getByText('Virtual Adults.')).toBeInTheDocument();
     expect(screen.getByText('Assignment')).toBeInTheDocument();
-    expect(screen.getByText('Virtual Adult')).toBeInTheDocument();
+    expect(screen.getByText('Students')).toBeInTheDocument();
     expect(screen.getByText('Log out')).toBeInTheDocument();
   });
 
