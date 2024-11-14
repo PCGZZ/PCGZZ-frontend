@@ -9,6 +9,13 @@ function CsvUploadButton({ op }) {
   const [file, setFile] = useState('');
   const { getAccessTokenSilently } = useAuth0();
 
+  const handleUploadCsvClick = () => {
+    alert(
+      'Please upload a .csv file with the following headers: "name", "email", and "student_id".',
+    );
+    document.getElementById('csv-upload').click();
+  };
+
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
@@ -56,11 +63,14 @@ function CsvUploadButton({ op }) {
         type="file"
         onChange={handleFileChange}
       />
-      <label htmlFor="csv-upload">
-        <Button variant="contained" component="span" color="primary">
-          Upload CSV
-        </Button>
-      </label>
+      <Button
+        variant="contained"
+        component="span"
+        color="primary"
+        onClick={handleUploadCsvClick}
+      >
+        Upload CSV
+      </Button>
       <Button
         variant="contained"
         color="secondary"
